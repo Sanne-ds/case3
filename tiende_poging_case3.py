@@ -17,11 +17,12 @@ stations_dict = {
     for _, row in metro_stations_data.iterrows()
 }
 
-# Fix 'AnnualisedEnEx' (verwijder punten en zet om naar int)
+# Fix 'AnnualisedEnEx' (verwijder niet-numerieke tekens en zet om naar float)
 metro_data["AnnualisedEnEx"] = (
-    metro_data["AnnualisedEnEx"].astype(str)
-    .str.replace('.', '', regex=True)  # Verwijdert punten uit cijfers
-    .astype(float)  # Zet om naar numeriek
+    metro_data["AnnualisedEnEx"]
+    .astype(str)                      # Zet om naar string om bewerkingen uit te voeren
+    .str.replace(r"[^\d]", "", regex=True)  # Verwijder ALLES wat geen cijfer is
+    .astype(float)                    # Zet om naar float
 )
 
 # Bereken het minimum, mediaan en maximum voor kleurindeling
