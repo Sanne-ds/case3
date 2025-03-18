@@ -1,10 +1,11 @@
 import pandas as pd
 
 bestanden = [
-    '2021_Q2_Central.csv',
-    '2021_Q3_Central.csv',
-    '2021_Q4_Central.csv'
+    'Downloads/Case 3/2021_Q2_Central.csv',
+    'Downloads/Case 3/2021_Q3_Central.csv',
+    'Downloads/Case 3/2021_Q4_Central.csv'
 ]
+
 
 dfs = [pd.read_csv(file) for file in bestanden]
 
@@ -18,10 +19,11 @@ from streamlit_folium import folium_static
 import pandas as pd
 
 bestanden = [
-    '2021_Q2_Central.csv',
-    '2021_Q3_Central.csv',
-    '2021_Q4_Central.csv'
+    'Downloads/Case 3/2021_Q2_Central.csv',
+    'Downloads/Case 3/2021_Q3_Central.csv',
+    'Downloads/Case 3/2021_Q4_Central.csv'
 ]
+
 
 
 dfs = [pd.read_csv(file) for file in bestanden]
