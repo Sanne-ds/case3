@@ -60,9 +60,12 @@ min_val, max_val = st.sidebar.slider(
 # Filter de data op basis van de sliderwaarden
 filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
 
+# Titel voor de checkboxen
+st.sidebar.subheader("Toon op de kaart")
+
 # Checkboxen voor het tonen van stations en tube lines
-show_stations = st.sidebar.checkbox("Toon stations", value=True)
-show_tube_lines = st.sidebar.checkbox("Toon tube lines", value=True)
+show_stations = st.sidebar.checkbox("Metro stations en drukte", value=True)
+show_tube_lines = st.sidebar.checkbox("Metro lijnen", value=True)
 
 # Kaart aanmaken
 m = folium.Map(location=[51.509865, -0.118092], tiles='CartoDB positron', zoom_start=11)
