@@ -41,7 +41,7 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Streamlit interface
-st.sidebar.title("Filter Opties")
+st.sidebar.title("Wat zou je willen zien?")
 filter_option = st.sidebar.radio("Toon data voor:", ["Weekdagen", "Weekend"])
 
 if filter_option == "Weekdagen":
@@ -59,6 +59,9 @@ min_val, max_val = st.sidebar.slider(
 
 # Filter de data op basis van de sliderwaarden
 filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
+
+# Titel voor de checkboxen
+st.sidebar.subheader("Toon op de kaart")
 
 # Checkboxen voor het tonen van stations en tube lines
 show_stations = st.sidebar.checkbox("Metro stations en bezoekersaantal", value=True)
