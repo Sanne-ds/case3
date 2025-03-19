@@ -91,17 +91,58 @@ for _, row in filtered_data.iterrows():
     else:
         print(f"Station niet gevonden of buiten bereik: {station_name}")
 
+# Define colors for each tube line
+line_colors = {
+    "Bakerloo": "brown",
+    "Central": "red",
+    "Circle": "yellow",
+    "District": "green",
+    "Hammersmith and City": "pink",
+    "Jubilee": "silver",
+    "Metropolitan": "purple",
+    "Northern": "black",
+    "Piccadilly": "blue",
+    "Victoria": "lightblue",
+    "Waterloo and City": "turquoise",
+    "Overground": "orange",
+    "C2C": "darkblue",
+    "DLR": "teal",
+    "Elizabeth": "magenta",
+    "Thameslink": "pink",
+    "Southern": "chocolate",
+    "Southeastern": "maroon",
+    "South Western": "navy",
+    "Tramlink": "lime",
+    "Great Northern": "darkred",
+    "Greater Anglia": "darkorange",
+    "Heathrow Express": "gold",
+    "Liberty": "lightgray",
+    "Lioness": "darkgray",
+    "Mildmay": "cyan",
+    "Suffragette": "purple",
+    "Windrush": "darkcyan",
+    "Weaver": "olive",
+}
+
 # Tube lines plotten
-for line in tube_lines_data["Tube Line"].unique():
-    line_data = tube_lines_data[tube_lines_data["Tube Line"] == line]
-    line_coords = []
-    for _, row in line_data.iterrows():
-        from_station = row["From Station"]
-        to_station = row["To Station"]
-        if from_station in stations_dict and to_station in stations_dict:
-            line_coords.append(stations_dict[from_station])
-            line_coords.append(stations_dict[to_station])
-    folium.PolyLine(line_coords, color="blue", weight=2.5, opacity=1).add_to(m)
+for idx, row in tube_lines_data.iterrows():
+    from_station = row["From Station"]
+    to_station = row["To Station"]
+    tube_line = row["Tube Line"]
+
+    if from_station in stations_dict and to_station in stations_dict:
+        lat_lon1 = stations_dict[from_station]
+        lat_lon2 = stations_dict[to_station]
+
+        line_color = line_colors.get(tube_line, "gray")
+
+        folium.PolyLine(
+            locations=[lat_lon1, lat_lon2],
+            color=line_color,
+            weight=2.5,
+            opacity=0.8,
+            tooltip=f"{tube_line}: {from_station} ↔ {to_station}"
+        ).add_to(m)
 
 # Weergeven in Streamlit
 folium_static(m)
