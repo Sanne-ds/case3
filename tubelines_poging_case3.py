@@ -12,6 +12,9 @@ metro_data = pd.read_csv('AC2021_AnnualisedEntryExit.csv', sep=';')
 metro_stations_data = pd.read_csv('London stations.csv')
 tube_lines_data = pd.read_csv('London tube lines.csv')
 
+# Voeg een Quarter kolom toe aan fiets_data_jaar
+fiets_data_jaar['Quarter'] = fiets_data_jaar['Date'].apply(lambda x: 'Q' + str((pd.to_datetime(x).month - 1) // 3 + 1))
+
 # Coördinaten dictionary
 stations_dict = {
     row["Station"]: (row["Latitude"], row["Longitude"]) 
@@ -54,6 +57,7 @@ quarter_option = st.sidebar.selectbox("Selecteer kwartaal", ["Alle kwartalen", "
 
 if quarter_option != "Alle kwartalen":
     quarter_data = fiets_data_jaar[fiets_data_jaar["Quarter"] == quarter_option]
+    metro_data = metro_data[metro_data["Quarter"] == quarter_option]
 else:
     quarter_data = fiets_data_jaar
 
