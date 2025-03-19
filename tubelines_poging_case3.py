@@ -49,10 +49,6 @@ if filter_option == "Weekdagen":
 else:
     metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
 
-# Beperk de waarden tot het 95e percentiel
-max_val = metro_data["FilteredEnEx"].quantile(0.95)
-metro_data["FilteredEnEx"] = metro_data["FilteredEnEx"].clip(upper=max_val)
-
 # Slider voor filteren op drukte
 min_val, max_val = st.sidebar.slider(
     "Selecteer bezoekersaantal bereik",
