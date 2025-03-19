@@ -60,36 +60,41 @@ min_val, max_val = st.sidebar.slider(
 # Filter de data op basis van de sliderwaarden
 filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
 
+# Checkboxen voor het tonen van stations en tube lines
+show_stations = st.sidebar.checkbox("Toon stations", value=True)
+show_tube_lines = st.sidebar.checkbox("Toon tube lines", value=True)
+
 # Kaart aanmaken
 m = folium.Map(location=[51.509865, -0.118092], tiles='CartoDB positron', zoom_start=11)
 
 # Metro stations plotten
-for _, row in filtered_data.iterrows():
-    station_name = row["Station"]
-    busy_value = row["FilteredEnEx"]
+if show_stations:
+    for _, row in filtered_data.iterrows():
+        station_name = row["Station"]
+        busy_value = row["FilteredEnEx"]
 
-    if station_name in stations_dict and pd.notnull(busy_value):
-        lat, lon = stations_dict[station_name]
-        radius = 5  # Statische grootte voor alle stippen
+        if station_name in stations_dict and pd.notnull(busy_value):
+            lat, lon = stations_dict[station_name]
+            radius = 5  # Statische grootte voor alle stippen
 
-        # Kleur bepalen op basis van globale drempels
-        if busy_value <= low_threshold:
-            color = "green"
-        elif busy_value <= mid_threshold:
-            color = "orange"
+            # Kleur bepalen op basis van globale drempels
+            if busy_value <= low_threshold:
+                color = "green"
+            elif busy_value <= mid_threshold:
+                color = "orange"
+            else:
+                color = "red"
+
+            folium.CircleMarker(
+                location=[lat, lon],
+                radius=radius,
+                popup=f"<b>{station_name}</b><br>Bezoekers: {busy_value:,.0f}",
+                fill=True,
+                fill_opacity=0.6,
+                color=color
+            ).add_to(m)
         else:
-            color = "red"
-
-        folium.CircleMarker(
-            location=[lat, lon],
-            radius=radius,
-            popup=f"<b>{station_name}</b><br>Bezoekers: {busy_value:,.0f}",
-            fill=True,
-            fill_opacity=0.6,
-            color=color
-        ).add_to(m)
-    else:
-        print(f"Station niet gevonden of buiten bereik: {station_name}")
+            print(f"Station niet gevonden of buiten bereik: {station_name}")
 
 # Define colors for each tube line
 line_colors = {
@@ -125,24 +130,25 @@ line_colors = {
 }
 
 # Tube lines plotten
-for idx, row in tube_lines_data.iterrows():
-    from_station = row["From Station"]
-    to_station = row["To Station"]
-    tube_line = row["Tube Line"]
+if show_tube_lines:
+    for idx, row in tube_lines_data.iterrows():
+        from_station = row["From Station"]
+        to_station = row["To Station"]
+        tube_line = row["Tube Line"]
 
-    if from_station in stations_dict and to_station in stations_dict:
-        lat_lon1 = stations_dict[from_station]
-        lat_lon2 = stations_dict[to_station]
+        if from_station in stations_dict and to_station in stations_dict:
+            lat_lon1 = stations_dict[from_station]
+            lat_lon2 = stations_dict[to_station]
 
-        line_color = line_colors.get(tube_line, "gray")
+            line_color = line_colors.get(tube_line, "gray")
 
-        folium.PolyLine(
-            locations=[lat_lon1, lat_lon2],
-            color=line_color,
-            weight=2.5,
-            opacity=0.8,
-            tooltip=f"{tube_line}: {from_station} ↔ {to_station}"
-        ).add_to(m)
+            folium.PolyLine(
+                locations=[lat_lon1, lat_lon2],
+                color=line_color,
+                weight=2.5,
+                opacity=0.8,
+                tooltip=f"{tube_line}: {from_station} ↔ {to_station}"
+            ).add_to(m)
 
 # Weergeven in Streamlit
 folium_static(m)
