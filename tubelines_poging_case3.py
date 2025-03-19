@@ -15,6 +15,9 @@ tube_lines_data = pd.read_csv('London tube lines.csv')
 # Voeg een Quarter kolom toe aan fiets_data_jaar
 fiets_data_jaar['Quarter'] = fiets_data_jaar['Date'].apply(lambda x: 'Q' + str((pd.to_datetime(x).month - 1) // 3 + 1))
 
+# Voeg een Quarter kolom toe aan metro_data
+metro_data['Quarter'] = metro_data['Date'].apply(lambda x: 'Q' + str((pd.to_datetime(x).month - 1) // 3 + 1))
+
 # Coördinaten dictionary
 stations_dict = {
     row["Station"]: (row["Latitude"], row["Longitude"]) 
@@ -56,10 +59,7 @@ else:
 quarter_option = st.sidebar.selectbox("Selecteer kwartaal", ["Alle kwartalen", "Q2", "Q3", "Q4"])
 
 if quarter_option != "Alle kwartalen":
-    quarter_data = fiets_data_jaar[fiets_data_jaar["Quarter"] == quarter_option]
     metro_data = metro_data[metro_data["Quarter"] == quarter_option]
-else:
-    quarter_data = fiets_data_jaar
 
 # Slider voor filteren op drukte
 min_val, max_val = st.sidebar.slider(
