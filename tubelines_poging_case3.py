@@ -49,6 +49,14 @@ if filter_option == "Weekdagen":
 else:
     metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
 
+# Kwartaal selectie
+quarter_option = st.sidebar.selectbox("Selecteer kwartaal", ["Alle kwartalen", "Q2", "Q3", "Q4"])
+
+if quarter_option != "Alle kwartalen":
+    quarter_data = fiets_data_jaar[fiets_data_jaar["Quarter"] == quarter_option]
+else:
+    quarter_data = fiets_data_jaar
+
 # Slider voor filteren op drukte
 min_val, max_val = st.sidebar.slider(
     "Selecteer bezoekersaantal bereik",
@@ -131,24 +139,16 @@ line_colors = {
 
 # Tube lines plotten
 if show_tube_lines:
-    for idx, row in tube_lines_data.iterrows():
-        from_station = row["From Station"]
-        to_station = row["To Station"]
-        tube_line = row["Tube Line"]
-
-        if from_station in stations_dict and to_station in stations_dict:
-            lat_lon1 = stations_dict[from_station]
-            lat_lon2 = stations_dict[to_station]
-
-            line_color = line_colors.get(tube_line, "gray")
-
-            folium.PolyLine(
-                locations=[lat_lon1, lat_lon2],
-                color=line_color,
-                weight=2.5,
-                opacity=0.8,
-                tooltip=f"{tube_line}: {from_station} ↔ {to_station}"
-            ).add_to(m)
+    for line in tube_lines_data["Tube Line"].unique():
+        line_data = tube_lines_data[tube_lines_data["Tube Line"] == line]
+        line_coords = []
+        for _, row in line_data.iterrows():
+            from_station = row["From Station"]
+            to_station = row["To Station"]
+            if from_station in stations_dict and to_station in stations_dict:
+                line_coords.append(stations_dict[from_station])
+                line_coords.append(stations_dict[to_station])
+        folium.PolyLine(line_coords, color=line_colors.get(line, "blue"), weight=2.5, opacity=1).add_to(m)
 
 # Weergeven in Streamlit
 folium_static(m)
