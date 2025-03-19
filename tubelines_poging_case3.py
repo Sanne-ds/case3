@@ -41,37 +41,37 @@ metro_data["TotalEnEx"] = metro_data[entry_exit_cols].sum(axis=1)
 low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
-# Streamlit interface
-st.sidebar.title("Wat zou je willen zien?")
-filter_option = st.sidebar.radio("Toon data voor:", ["Weekdagen", "Weekend"])
-
-if filter_option == "Weekdagen":
-    metro_data["FilteredEnEx"] = metro_data[["Weekday(Mon-Thu)Entries", "Weekday(Mon-Thu)Exits"]].sum(axis=1)
-else:
-    metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
-
-# Slider voor filteren op drukte
-min_val, max_val = st.sidebar.slider(
-    "Selecteer bezoekersaantal",
-    int(metro_data["FilteredEnEx"].min()),
-    int(metro_data["FilteredEnEx"].max()),
-    (int(metro_data["FilteredEnEx"].min()), int(metro_data["FilteredEnEx"].max()))
-)
-
-# Filter de data op basis van de sliderwaarden
-filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
-
-# Titel voor de checkboxen
-st.sidebar.subheader("Toon op de kaart")
-
-# Checkboxen voor het tonen van stations en tube lines
-show_stations = st.sidebar.checkbox("Metro stations en bezoekersaantal", value=True)
-show_tube_lines = st.sidebar.checkbox("Metro lijnen", value=True)
-
 # Tabs aanmaken
 tab1, tab2 = st.tabs(["Metro Stations en Lijnen", "Fietsverhuurstations"])
 
 with tab1:
+    # Streamlit interface voor metrodata
+    st.sidebar.title("Wat zou je willen zien?")
+    filter_option = st.sidebar.radio("Toon data voor:", ["Weekdagen", "Weekend"])
+
+    if filter_option == "Weekdagen":
+        metro_data["FilteredEnEx"] = metro_data[["Weekday(Mon-Thu)Entries", "Weekday(Mon-Thu)Exits"]].sum(axis=1)
+    else:
+        metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
+
+    # Slider voor filteren op drukte
+    min_val, max_val = st.sidebar.slider(
+        "Selecteer bezoekersaantal",
+        int(metro_data["FilteredEnEx"].min()),
+        int(metro_data["FilteredEnEx"].max()),
+        (int(metro_data["FilteredEnEx"].min()), int(metro_data["FilteredEnEx"].max()))
+    )
+
+    # Filter de data op basis van de sliderwaarden
+    filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
+
+    # Titel voor de checkboxen
+    st.sidebar.subheader("Toon op de kaart")
+
+    # Checkboxen voor het tonen van stations en tube lines
+    show_stations = st.sidebar.checkbox("Metro stations en bezoekersaantal", value=True)
+    show_tube_lines = st.sidebar.checkbox("Metro lijnen", value=True)
+
     # Kaart aanmaken
     m = folium.Map(location=[51.509865, -0.118092], tiles='CartoDB positron', zoom_start=11)
 
