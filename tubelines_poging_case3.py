@@ -51,7 +51,7 @@ else:
 
 # Slider voor filteren op drukte
 min_val, max_val = st.sidebar.slider(
-    "Selecteer bezoekersaantal bereik",
+    "Selecteer bezoekersaantal",
     int(metro_data["FilteredEnEx"].min()),
     int(metro_data["FilteredEnEx"].max()),
     (int(metro_data["FilteredEnEx"].min()), int(metro_data["FilteredEnEx"].max()))
@@ -60,11 +60,8 @@ min_val, max_val = st.sidebar.slider(
 # Filter de data op basis van de sliderwaarden
 filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
 
-# Titel voor de checkboxen
-st.sidebar.subheader("Toon op de kaart")
-
 # Checkboxen voor het tonen van stations en tube lines
-show_stations = st.sidebar.checkbox("Metro stations en drukte", value=True)
+show_stations = st.sidebar.checkbox("Metro stations en bezoekersaantal", value=True)
 show_tube_lines = st.sidebar.checkbox("Metro lijnen", value=True)
 
 # Kaart aanmaken
