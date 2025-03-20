@@ -45,7 +45,7 @@ mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 tab1, tab2 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations"])
 
 with tab1:
-    st.header("🚇 Metro Stations en Lijnen")
+    st.markdown("<h2>🚇 Metro Stations en Lijnen</h2>", unsafe_allow_html=True)
 
     with st.expander("⚙️ Metro Filteropties", expanded=True):
         filter_option = st.radio("Toon data voor:", ["Weekdagen", "Weekend"])
@@ -142,7 +142,7 @@ with tab1:
     folium_static(m)
 
 with tab2:
-    st.header("🚲 Fietsverhuurstations")
+    st.markdown("<h2>🚲 Fietsverhuurstations</h2>", unsafe_allow_html=True)
 
     with st.expander("⚙️ Fiets Filteropties", expanded=True):
         bike_slider = st.slider("Selecteer het minimum aantal beschikbare fietsen", 0, 100, 0)
