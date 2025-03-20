@@ -42,12 +42,12 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs aanmaken
-tab1, tab2 = st.tabs(["Metro Stations en Lijnen", "Fietsverhuurstations"])
+tab1, tab2 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations"])
 
 with tab1:
-    # 🚇 Metrodata Sidebar
-    with st.sidebar:
-        st.title("🚇 Metro Filteropties")
+    st.header("🚇 Metro Stations en Lijnen")
+
+    with st.expander("⚙️ Metro Filteropties", expanded=True):
         filter_option = st.radio("Toon data voor:", ["Weekdagen", "Weekend"])
 
         if filter_option == "Weekdagen":
@@ -136,16 +136,13 @@ with tab1:
     folium_static(m)
 
 with tab2:
-    # 🚲 Fietsverhuur Sidebar
-    with st.sidebar:
-        st.title("🚲 Fietsverhuur Filteropties")
+    st.header("🚲 Fietsverhuurstations")
+
+    with st.expander("⚙️ Fiets Filteropties", expanded=True):
         bike_slider = st.slider("Selecteer het minimum aantal beschikbare fietsen", 0, 100, 0)
 
     df_cyclestations = pd.read_csv('cycle_stations.csv')
     df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
-
-    st.title('London Cycle Stations')
-    st.markdown("Interactieve kaart met fietsverhuurstations in Londen")
 
     m = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
     marker_cluster = MarkerCluster().add_to(m)
