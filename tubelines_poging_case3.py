@@ -38,8 +38,8 @@ metro_data[entry_exit_cols] = metro_data[entry_exit_cols] * 1000
 # Bereken totale drempelwaardes over alle data
 metro_data["TotalEnEx"] = metro_data[entry_exit_cols].sum(axis=1)
 
-low_threshold = metro_data["TotalEnEx"].quantile(0.33)
-mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
+low_threshold = metro_data["TotalEnEx"].quantile(0.40)
+mid_threshold = metro_data["TotalEnEx"].quantile(0.80)
 
 # Tabs aanmaken
 tab1, tab2 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations"])
