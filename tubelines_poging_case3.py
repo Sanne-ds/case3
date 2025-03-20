@@ -188,11 +188,19 @@ with tab3:
     # Zet de 'Unnamed: 0' kolom om naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
 
+    # Zet de datum in de fietsdata correct
+    fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
+    fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
+
+    # Merge de weerdata en fietsdata op datum
+    weer_data = pd.merge(weer_data, fiets_rentals[['Day', 'Total Rentals']], left_on='Date', right_on='Day', how='left')
+
     # Filter de data voor 2021
     weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
 
-    # Vertaling van kolomnamen naar volledige betekenis
+    # Vertaling van kolomnamen
     column_mapping = {
+        'Total Rentals': 'Aantal Verhuurde Fietsen',
         'tavg': 'Gemiddelde Temperatuur (°C)',
         'tmin': 'Minimale Temperatuur (°C)',
         'tmax': 'Maximale Temperatuur (°C)',
@@ -218,18 +226,23 @@ with tab3:
     # Toon de gegevens voor de geselecteerde week
     if not filtered_data_week.empty:
         st.write(f"Gegevens voor week {week_nummer} van 2021 (rondom {datum.strftime('%d-%m-%Y')}):")
+
         # Vervang kolomnamen met de vertaalde versie
         filtered_data_week = filtered_data_week.rename(columns=column_mapping)
 
         # Reset de index en voeg de aangepaste index toe die begint bij 1
         filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
-        filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start de index vanaf 1
+        filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start index vanaf 1
 
-        # Zorg ervoor dat de juiste kolommen worden weergegeven zonder de oude index
+        # Datum formatteren
         filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%d %B %Y')
-        st.dataframe(filtered_data_week_reset[['Date', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
-                                               'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 
-                                               'Windrichting (°)', 'Windsnelheid (m/s)', 'Windstoten (m/s)', 
-                                               'Luchtdruk (hPa)', 'Zonduur (uren)']])
+
+        # Kolommen herschikken om "Aantal Verhuurde Fietsen" direct na de datum te zetten
+        kolommen = ['Date', 'Aantal Verhuurde Fietsen', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
+                    'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 'Windrichting (°)', 
+                    'Windsnelheid (m/s)', 'Windstoten (m/s)', 'Luchtdruk (hPa)', 'Zonduur (uren)']
+        
+        st.dataframe(filtered_data_week_reset[kolommen])
+
     else:
         st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
