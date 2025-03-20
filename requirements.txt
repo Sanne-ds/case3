@@ -2,3 +2,4 @@ folium
 streamlit
 pandas
 streamlit_folium
+seaborn
