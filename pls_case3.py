@@ -265,7 +265,7 @@ combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date",
 combined_df.drop(columns=["Date"], inplace=True)
 
 # Streamlit-app titel
-st.title("Regressieanalyse: Fietsverhuur en Weer")
+st.subheader("Correlatie tussen fietsverhuur en weer")
 
 # Selecteer een weerfactor voor de regressie
 weerfactor = st.selectbox("Kies een weerfactor:", ["tavg", "tmin", "tmax", "prcp", "wspd"])
