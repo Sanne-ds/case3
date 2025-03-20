@@ -206,7 +206,7 @@ with tab3:
     }
 
     # Kalender om een specifieke datum te kiezen
-    datum = st.date_input("Selecteer een datum in 2021", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
+    datum = st.date_input("**Selecteer een datum in 2021**", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
 
     # Haal het weeknummer van de geselecteerde datum op
     week_nummer = datum.isocalendar()[1]
