@@ -264,17 +264,11 @@ combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date",
 # Verwijder de dubbele datumkolom (we houden "Day")
 combined_df.drop(columns=["Date"], inplace=True)
 
-weerfactoren_mapping = {
-    "Gemiddelde Temperatuur (°C)": "tavg",
-    "Minimale Temperatuur (°C)": "tmin",
-    "Maximale Temperatuur (°C)": "tmax",
-    "Neerslag (mm)": "prcp"
-}
 # Streamlit-app titel
 st.title("Regressieanalyse: Fietsverhuur en Weer")
 
 # Selecteer een weerfactor voor de regressie
-weerfactor_nl = st.selectbox("Kies een weerfactor:", list(weerfactoren_mapping.keys()))
+weerfactor = st.selectbox("Kies een weerfactor:", ["tavg", "tmin", "tmax", "prcp", "wspd"])
 
 # X en Y variabelen
 x = combined_df[weerfactor]  # Weerfactor (bijv. temperatuur)
