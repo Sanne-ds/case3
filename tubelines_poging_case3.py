@@ -3,6 +3,7 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 from folium.plugins import MarkerCluster
+from datetime import datetime
 
 # Data inladen
 bestanden = ['2021_Q2_Central.csv', '2021_Q3_Central.csv', '2021_Q4_Central.csv']
@@ -19,7 +20,7 @@ stations_dict = {
     for _, row in metro_stations_data.iterrows()
 }
 
-# Fix 'AnnualisedEnEx'
+# Fix 'AnnualisedEnEx' (verwijder niet-numerieke tekens en zet om naar float)
 metro_data["AnnualisedEnEx"] = (
     metro_data["AnnualisedEnEx"]
     .astype(str)
@@ -27,18 +28,88 @@ metro_data["AnnualisedEnEx"] = (
     .astype(float)
 )
 
+# Vermenigvuldig de Entries en Exits met 1.000 om juiste aantallen te krijgen
+entry_exit_cols = [
+    "Weekday(Mon-Thu)Entries", "Weekday(Mon-Thu)Exits",
+    "FridayEntries", "SaturdayEntries", "SundayEntries",
+    "FridayExits", "SaturdayExits", "SundayExits"
+]
+metro_data[entry_exit_cols] = metro_data[entry_exit_cols] * 1000
+
+# Bereken totale drempelwaardes over alle data
+metro_data["TotalEnEx"] = metro_data[entry_exit_cols].sum(axis=1)
+
+low_threshold = metro_data["TotalEnEx"].quantile(0.33)
+mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
+
 # Tabs aanmaken
 tab1, tab2, tab3 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "☀️ Weerdata"])
 
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
-    # Metro filteropties en kaart (ongewijzigd)
-    
+
+    with st.expander("⚙️ **Metro Filteropties**", expanded=True):
+        filter_option = st.radio("**Toon data voor**", ["Weekdagen", "Weekend"])
+
+        if filter_option == "Weekdagen":
+            metro_data["FilteredEnEx"] = metro_data[["Weekday(Mon-Thu)Entries", "Weekday(Mon-Thu)Exits"]].sum(axis=1)
+        else:
+            metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
+
+        drukte_option = st.select_slider(
+            "**Selecteer drukte**",
+            options=["Alle", "Rustig", "Normaal", "Druk"],
+            value="Alle"
+        )
+
+        if drukte_option == "Rustig":
+            filtered_data = metro_data[metro_data["FilteredEnEx"] <= low_threshold]
+        elif drukte_option == "Normaal":
+            filtered_data = metro_data[(metro_data["FilteredEnEx"] > low_threshold) & (metro_data["FilteredEnEx"] <= mid_threshold)]
+        elif drukte_option == "Druk":
+            filtered_data = metro_data[metro_data["FilteredEnEx"] > mid_threshold]
+        else:
+            filtered_data = metro_data
+
+        st.write("**Kies visualisatie**")
+        show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
+        show_tube_lines = st.checkbox("Metro lijnen", value=True)
+
+    m = folium.Map(location=[51.509865, -0.118092], tiles='CartoDB positron', zoom_start=11)
+
+    if show_stations:
+        for _, row in filtered_data.iterrows():
+            station_name = row["Station"]
+            busy_value = row["FilteredEnEx"]
+
+            if station_name in stations_dict and pd.notnull(busy_value):
+                lat, lon = stations_dict[station_name]
+                radius = 5
+
+                if busy_value <= low_threshold:
+                    color = "green"
+                elif busy_value <= mid_threshold:
+                    color = "orange"
+                else:
+                    color = "red"
+
+                folium.CircleMarker(
+                    location=[lat, lon],
+                    radius=radius,
+                    popup=f"<b>{station_name}</b><br>Bezoekers: {busy_value:,.0f}",
+                    fill=True,
+                    fill_opacity=0.6,
+                    color=color
+                ).add_to(m)
+
+    folium_static(m)
+
 with tab2:
     st.header("🚲 Fietsverhuurstations")
+
     with st.expander("⚙️ **Fiets Filteropties**", expanded=True):
         bike_slider = st.slider("**Selecteer het minimum aantal beschikbare fietsen**", 0, 100, 0)
-    
+
     df_cyclestations = pd.read_csv('cycle_stations.csv')
     df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
 
@@ -46,14 +117,10 @@ with tab2:
     marker_cluster = MarkerCluster().add_to(m)
 
     for index, row in df_cyclestations.iterrows():
-        lat, long, station_name = row['lat'], row['long'], row['name']
-        nb_bikes, nb_standard_bikes, nb_ebikes = row['nbBikes'], row['nbStandardBikes'], row['nbEBikes']
-        install_date = row['installDateFormatted']
-
-        if nb_bikes >= bike_slider:
+        if row['nbBikes'] >= bike_slider:
             folium.Marker(
-                location=[lat, long],
-                popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_bikes}<br>Standaard: {nb_standard_bikes}<br>EBikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
+                location=[row['lat'], row['long']],
+                popup=f"Station: {row['name']}\nFietsen: {row['nbBikes']}",
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(marker_cluster)
 
@@ -61,46 +128,10 @@ with tab2:
 
 with tab3:
     st.header("☀️ Weerdata voor 2021")
-
-    # Weerdata laden
-    weer_data = pd.read_csv('weather_london.csv')
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
-
-    # Filter de data voor 2021
-    weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
-
-    # Vertaling van kolomnamen
-    column_mapping = {
-        'tavg': 'Gemiddelde Temperatuur (°C)',
-        'tmin': 'Minimale Temperatuur (°C)',
-        'tmax': 'Maximale Temperatuur (°C)',
-        'prcp': 'Neerslag (mm)',
-        'snow': 'Sneeuwval (cm)',
-        'wdir': 'Windrichting (°)',
-        'wspd': 'Windsnelheid (m/s)',
-        'wpgt': 'Windstoten (m/s)',
-        'pres': 'Luchtdruk (hPa)',
-        'tsun': 'Zonduur (uren)'
-    }
-
     datum = st.date_input("Selecteer een datum in 2021", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
     week_nummer = datum.isocalendar()[1]
-
-    weer_data_2021['Week'] = weer_data_2021['Date'].dt.isocalendar().week
-    filtered_data_week = weer_data_2021[weer_data_2021['Week'] == week_nummer]
-
-    if not filtered_data_week.empty:
-        st.write(f"Gegevens voor week {week_nummer} van 2021 (rondom {datum.strftime('%d-%m-%Y')}):")
-        filtered_data_week = filtered_data_week.rename(columns=column_mapping)
-        
-        # Formatteer de datum als '6 december 2021'
-        filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
-        filtered_data_week_reset.index = filtered_data_week_reset.index + 1
-        filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%-d %B %Y')
-        
-        st.dataframe(filtered_data_week_reset[['Date', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
-                                               'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 
-                                               'Windrichting (°)', 'Windsnelheid (m/s)', 'Windstoten (m/s)', 
-                                               'Luchtdruk (hPa)', 'Zonduur (uren)']])
-    else:
-        st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
+    weer_data['Week'] = weer_data['Date'].dt.isocalendar().week
+    filtered_data_week = weer_data[weer_data['Week'] == week_nummer]
+    filtered_data_week['Date'] = filtered_data_week['Date'].dt.strftime('%-d %B %Y')
+    st.dataframe(filtered_data_week)
