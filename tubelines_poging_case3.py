@@ -58,16 +58,18 @@ with tab1:
         # Select slider voor drukte
         drukte_option = st.select_slider(
             "Selecteer drukte",
-            options=["Rustig", "Normaal", "Druk"],
-            value="Normaal"
+            options=["Alle", "Rustig", "Normaal", "Druk"],
+            value="Alle"
         )
 
         if drukte_option == "Rustig":
             filtered_data = metro_data[metro_data["FilteredEnEx"] <= low_threshold]
         elif drukte_option == "Normaal":
             filtered_data = metro_data[(metro_data["FilteredEnEx"] > low_threshold) & (metro_data["FilteredEnEx"] <= mid_threshold)]
-        else:
+        elif drukte_option == "Druk":
             filtered_data = metro_data[metro_data["FilteredEnEx"] > mid_threshold]
+        else:
+            filtered_data = metro_data
 
         show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
         show_tube_lines = st.checkbox("Metro lijnen", value=True)
