@@ -268,7 +268,7 @@ combined_df.drop(columns=["Date"], inplace=True)
 st.title("Fietsverhuur en Weer")
 
 # Selecteer een weerfactor voor de regressie
-weerfactor = st.selectbox("Kies een weerfactor:", ["gemiddelde temperatuur", "minimum temperatuur", "maximum temperatuur", "neerslag"])
+weerfactor = st.selectbox("Kies een weerfactor:", ["tavg", "tmin", "tmax", "prcp", "wspd"])
 
 # X en Y variabelen
 x = combined_df[weerfactor]  # Weerfactor (bijv. temperatuur)
