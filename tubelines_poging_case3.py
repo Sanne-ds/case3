@@ -71,7 +71,7 @@ with tab1:
         else:
             filtered_data = metro_data
 
-        st.subheader("Kies visualisatie")
+        st.write("Kies visualisatie")
         show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
         show_tube_lines = st.checkbox("Metro lijnen", value=True)
 
