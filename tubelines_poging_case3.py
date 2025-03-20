@@ -3,7 +3,6 @@ import streamlit as st
 import folium
 from streamlit_folium import folium_static
 from folium.plugins import MarkerCluster
-from datetime import datetime
 
 # Data inladen
 bestanden = ['2021_Q2_Central.csv', '2021_Q3_Central.csv', '2021_Q4_Central.csv']
@@ -43,7 +42,7 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs aanmaken
-tab1, tab2, tab3 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "☀️ Weerdata"])
+tab1, tab2, tab3 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weerdata"])
 
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
@@ -56,6 +55,7 @@ with tab1:
         else:
             metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
 
+        # Select slider voor drukte
         drukte_option = st.select_slider(
             "**Selecteer drukte**",
             options=["Alle", "Rustig", "Normaal", "Druk"],
@@ -75,6 +75,7 @@ with tab1:
         show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
         show_tube_lines = st.checkbox("Metro lijnen", value=True)
 
+    # Metro kaart renderen...
     m = folium.Map(location=[51.509865, -0.118092], tiles='CartoDB positron', zoom_start=11)
 
     if show_stations:
@@ -102,6 +103,57 @@ with tab1:
                     color=color
                 ).add_to(m)
 
+    if show_tube_lines:
+        line_colors = {
+            "Bakerloo": "brown",
+            "Central": "red",
+            "Circle": "yellow",
+            "District": "green",
+            "Hammersmith and City": "pink",
+            "Jubilee": "silver",
+            "Metropolitan": "purple",
+            "Northern": "black",
+            "Piccadilly": "blue",
+            "Victoria": "lightblue",
+            "Waterloo and City": "turquoise",
+            "Overground": "orange",
+            "DLR": "teal",
+            "Elizabeth": "magenta",
+            "Thameslink": "pink",
+            "Southern": "chocolate",
+            "Southeastern": "maroon",
+            "South Western": "navy",
+            "Tramlink": "lime",
+            "Great Northern": "darkred",
+            "Greater Anglia": "darkorange",
+            "Heathrow Express": "gold",
+            "Liberty": "lightgray",
+            "Lioness": "darkgray",
+            "Mildmay": "cyan",
+            "Suffragette": "purple",
+            "Windrush": "darkcyan",
+            "Weaver": "olive",
+        }
+
+        for idx, row in tube_lines_data.iterrows():
+            from_station = row["From Station"]
+            to_station = row["To Station"]
+            tube_line = row["Tube Line"]
+
+            if from_station in stations_dict and to_station in stations_dict:
+                lat_lon1 = stations_dict[from_station]
+                lat_lon2 = stations_dict[to_station]
+
+                line_color = line_colors.get(tube_line, "gray")
+
+                folium.PolyLine(
+                    locations=[lat_lon1, lat_lon2],
+                    color=line_color,
+                    weight=2.5,
+                    opacity=0.8,
+                    tooltip=f"{tube_line}: {from_station} ↔ {to_station}"
+                ).add_to(m)
+
     folium_static(m)
 
 with tab2:
@@ -117,21 +169,66 @@ with tab2:
     marker_cluster = MarkerCluster().add_to(m)
 
     for index, row in df_cyclestations.iterrows():
-        if row['nbBikes'] >= bike_slider:
+        lat, long, station_name = row['lat'], row['long'], row['name']
+        nb_bikes, nb_standard_bikes, nb_ebikes = row['nbBikes'], row['nbStandardBikes'], row['nbEBikes']
+        install_date = row['installDateFormatted']
+
+        if nb_bikes >= bike_slider:
             folium.Marker(
-                location=[row['lat'], row['long']],
-                popup=f"Station: {row['name']}\nFietsen: {row['nbBikes']}",
+                location=[lat, long],
+                popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_bikes}<br>Standaard: {nb_standard_bikes}<br>EBikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(marker_cluster)
 
     folium_static(m)
 
 with tab3:
-    st.header("☀️ Weerdata voor 2021")
+    st.header("🌤️ Weerdata voor 2021")
+
+    # Zet de 'Unnamed: 0' kolom om naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
-    datum = st.date_input("Selecteer een datum in 2021", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
+
+    # Filter de data voor 2021
+    weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
+
+    # Vertaling van kolomnamen naar volledige betekenis
+    column_mapping = {
+        'tavg': 'Gemiddelde Temperatuur (°C)',
+        'tmin': 'Minimale Temperatuur (°C)',
+        'tmax': 'Maximale Temperatuur (°C)',
+        'prcp': 'Neerslag (mm)',
+        'snow': 'Sneeuwval (cm)',
+        'wdir': 'Windrichting (°)',
+        'wspd': 'Windsnelheid (m/s)',
+        'wpgt': 'Windstoten (m/s)',
+        'pres': 'Luchtdruk (hPa)',
+        'tsun': 'Zonduur (uren)'
+    }
+
+    # Kalender om een specifieke datum te kiezen
+    datum = st.date_input("**Selecteer een datum in 2021**", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
+
+    # Haal het weeknummer van de geselecteerde datum op
     week_nummer = datum.isocalendar()[1]
-    weer_data['Week'] = weer_data['Date'].dt.isocalendar().week
-    filtered_data_week = weer_data[weer_data['Week'] == week_nummer]
-    filtered_data_week['Date'] = filtered_data_week['Date'].dt.strftime('%-d %B %Y')
-    st.dataframe(filtered_data_week)
+
+    # Filter de data voor de geselecteerde week
+    weer_data_2021['Week'] = weer_data_2021['Date'].dt.isocalendar().week
+    filtered_data_week = weer_data_2021[weer_data_2021['Week'] == week_nummer]
+
+    # Toon de gegevens voor de geselecteerde week
+    if not filtered_data_week.empty:
+        st.write(f"Gegevens voor week {week_nummer} van 2021 (rondom {datum.strftime('%d-%m-%Y')}):")
+        # Vervang kolomnamen met de vertaalde versie
+        filtered_data_week = filtered_data_week.rename(columns=column_mapping)
+
+        # Reset de index en voeg de aangepaste index toe die begint bij 1
+        filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
+        filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start de index vanaf 1
+
+        # Zorg ervoor dat de juiste kolommen worden weergegeven zonder de oude index
+        st.dataframe(filtered_data_week_reset[['Date', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
+                                               'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 
+                                               'Windrichting (°)', 'Windsnelheid (m/s)', 'Windstoten (m/s)', 
+                                               'Luchtdruk (hPa)', 'Zonduur (uren)']])
+    else:
+        st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
