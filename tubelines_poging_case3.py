@@ -226,6 +226,7 @@ with tab3:
         filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start de index vanaf 1
 
         # Zorg ervoor dat de juiste kolommen worden weergegeven zonder de oude index
+        filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%d %B %Y')
         st.dataframe(filtered_data_week_reset[['Date', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
                                                'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 
                                                'Windrichting (°)', 'Windsnelheid (m/s)', 'Windstoten (m/s)', 
