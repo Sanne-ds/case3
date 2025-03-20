@@ -55,18 +55,22 @@ with tab1:
         else:
             metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
 
-        min_val, max_val = st.slider(
-            "Selecteer bezoekersaantal",
-            int(metro_data["FilteredEnEx"].min()),
-            int(metro_data["FilteredEnEx"].max()),
-            (int(metro_data["FilteredEnEx"].min()), int(metro_data["FilteredEnEx"].max()))
+        # Select slider voor drukte
+        drukte_option = st.select_slider(
+            "Selecteer drukte",
+            options=["Rustig", "Normaal", "Druk"],
+            value="Normaal"
         )
+
+        if drukte_option == "Rustig":
+            filtered_data = metro_data[metro_data["FilteredEnEx"] <= low_threshold]
+        elif drukte_option == "Normaal":
+            filtered_data = metro_data[(metro_data["FilteredEnEx"] > low_threshold) & (metro_data["FilteredEnEx"] <= mid_threshold)]
+        else:
+            filtered_data = metro_data[metro_data["FilteredEnEx"] > mid_threshold]
 
         show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
         show_tube_lines = st.checkbox("Metro lijnen", value=True)
-
-    # Filter de data op basis van de sliderwaarden
-    filtered_data = metro_data[(metro_data["FilteredEnEx"] >= min_val) & (metro_data["FilteredEnEx"] <= max_val)]
 
     # Metro kaart renderen...
     m = folium.Map(location=[51.509865, -0.118092], tiles='CartoDB positron', zoom_start=11)
