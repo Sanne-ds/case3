@@ -5,5 +5,3 @@ streamlit_folium
 seaborn
 matplotlib
 statsmodels
-geopandas
-branca
