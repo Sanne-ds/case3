@@ -7,9 +7,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 
-boroughs = pd.read_csv('london_boroughs.geojson')
+
 import geopandas as gpd
 from branca.colormap import linear
+boroughs = pd.read_csv('london_boroughs.geojson')
 
 # Data inladen
 bestanden = ['2021_Q2_Central.csv', '2021_Q3_Central.csv', '2021_Q4_Central.csv']
