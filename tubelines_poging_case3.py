@@ -188,19 +188,11 @@ with tab3:
     # Zet de 'Unnamed: 0' kolom om naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
 
-    # Zet de datum in de fietsdata correct
-    fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
-    fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
-
-    # Merge de weerdata en fietsdata op datum
-    weer_data = pd.merge(weer_data, fiets_rentals[['Day', 'Total Rentals']], left_on='Date', right_on='Day', how='left')
-
     # Filter de data voor 2021
     weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
 
-    # Vertaling van kolomnamen
+    # Vertaling van kolomnamen naar volledige betekenis
     column_mapping = {
-        'Total Rentals': 'Aantal Verhuurde Fietsen',
         'tavg': 'Gemiddelde Temperatuur (°C)',
         'tmin': 'Minimale Temperatuur (°C)',
         'tmax': 'Maximale Temperatuur (°C)',
@@ -226,23 +218,44 @@ with tab3:
     # Toon de gegevens voor de geselecteerde week
     if not filtered_data_week.empty:
         st.write(f"Gegevens voor week {week_nummer} van 2021 (rondom {datum.strftime('%d-%m-%Y')}):")
-
         # Vervang kolomnamen met de vertaalde versie
         filtered_data_week = filtered_data_week.rename(columns=column_mapping)
 
         # Reset de index en voeg de aangepaste index toe die begint bij 1
         filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
-        filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start index vanaf 1
+        filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start de index vanaf 1
 
-        # Datum formatteren
+        # Zorg ervoor dat de juiste kolommen worden weergegeven zonder de oude index
         filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%d %B %Y')
-
-        # Kolommen herschikken om "Aantal Verhuurde Fietsen" direct na de datum te zetten
-        kolommen = ['Date', 'Aantal Verhuurde Fietsen', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
-                    'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 'Windrichting (°)', 
-                    'Windsnelheid (m/s)', 'Windstoten (m/s)', 'Luchtdruk (hPa)', 'Zonduur (uren)']
-        
-        st.dataframe(filtered_data_week_reset[kolommen])
-
+        st.dataframe(filtered_data_week_reset[['Date', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
+                                               'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 
+                                               'Windrichting (°)', 'Windsnelheid (m/s)', 'Windstoten (m/s)', 
+                                               'Luchtdruk (hPa)', 'Zonduur (uren)']])
     else:
         st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
+
+    # Voeg de fietsverhuurkaart toe aan het weer-tabblad
+    st.subheader("🚲 Fietsverhuurstations")
+
+    with st.expander("⚙️ **Fiets Filteropties**", expanded=True):
+        bike_slider = st.slider("**Selecteer het minimum aantal beschikbare fietsen**", 0, 100, 0)
+
+    df_cyclestations = pd.read_csv('cycle_stations.csv')
+    df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
+
+    m = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
+    marker_cluster = MarkerCluster().add_to(m)
+
+    for index, row in df_cyclestations.iterrows():
+        lat, long, station_name = row['lat'], row['long'], row['name']
+        nb_bikes, nb_standard_bikes, nb_ebikes = row['nbBikes'], row['nbStandardBikes'], row['nbEBikes']
+        install_date = row['installDateFormatted']
+
+        if nb_bikes >= bike_slider:
+            folium.Marker(
+                location=[lat, long],
+                popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_bikes}<br>Standaard: {nb_standard_bikes}<br>EBikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(marker_cluster)
+
+    folium_static(m)
