@@ -264,8 +264,28 @@ combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date",
 # Verwijder de dubbele datumkolom (we houden "Day")
 combined_df.drop(columns=["Date"], inplace=True)
 
+import pandas as pd
+import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+# Data inladen
+fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
+weer_data = pd.read_csv('weather_london.csv')
+
+# Zorg ervoor dat de datums in datetime-formaat staan
+fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
+weer_data["Date"] = pd.to_datetime(weer_data["Unnamed: 0"])  # Zet de juiste kolomnaam om
+
+# Merge de datasets op datum
+combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date", how="inner")
+
+# Verwijder de dubbele datumkolom (we houden "Day")
+combined_df.drop(columns=["Date"], inplace=True)
+
 # Streamlit-app titel
-st.title("Fietsverhuur en Weer")
+st.title("Regressieanalyse: Fietsverhuur en Weer")
 
 # Selecteer een weerfactor voor de regressie
 weerfactor = st.selectbox("Kies een weerfactor:", ["tavg", "tmin", "tmax", "prcp", "wspd"])
@@ -290,3 +310,4 @@ ax.text(0.05, 0.9, equation, transform=ax.transAxes, fontsize=12, color="red")
 
 # Toon de plot in Streamlit
 st.pyplot(fig)
+
