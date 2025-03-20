@@ -38,7 +38,7 @@ metro_data[entry_exit_cols] = metro_data[entry_exit_cols] * 1000
 # Bereken totale drempelwaardes over alle data
 metro_data["TotalEnEx"] = metro_data[entry_exit_cols].sum(axis=1)
 
-low_threshold = metro_data["TotalEnEx"].quantile(0.40)
+low_threshold = metro_data["TotalEnEx"].quantile(0.20)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.80)
 
 # Tabs aanmaken
