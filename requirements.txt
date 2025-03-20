@@ -3,5 +3,5 @@ streamlit
 pandas
 streamlit_folium
 seaborn
-matplotlib.pyplot
-statsmodels.api
+matplotlib
+statsmodels
