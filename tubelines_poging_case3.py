@@ -183,7 +183,7 @@ with tab2:
     folium_static(m)
 
 with tab3:
-    st.header("🌦️ Weerdata voor 2021")
+    st.header("🌤️ Weerdata voor 2021")
 
     # Zet de 'Unnamed: 0' kolom om naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
