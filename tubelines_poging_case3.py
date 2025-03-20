@@ -47,7 +47,7 @@ tab1, tab2 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
 
-    with st.expander("⚙️ Metro Filteropties", expanded=True):
+    with st.expander("⚙️ **Metro Filteropties**", expanded=True):
         filter_option = st.radio("Toon data voor:", ["Weekdagen", "Weekend"])
 
         if filter_option == "Weekdagen":
