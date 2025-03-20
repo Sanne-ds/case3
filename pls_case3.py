@@ -45,7 +45,7 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs aanmaken
-tab1, tab2, tab3 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weer en fietsverhuur correlatie"])
+tab1, tab2, tab3 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weerdata"])
 
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
@@ -186,7 +186,7 @@ with tab2:
     folium_static(m)
 
 with tab3:
-    st.header("🌤️ Weer en fietsverhuurdata voor 2021")
+    st.header("🌤️ Weerdata voor 2021")
 
     # Zet de 'Unnamed: 0' kolom om naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
@@ -265,7 +265,7 @@ combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date",
 combined_df.drop(columns=["Date"], inplace=True)
 
 # Streamlit-app titel
-st.subheader("Correlatie tussen fietsverhuur en weer")
+st.title("Regressieanalyse: Fietsverhuur en Weer")
 
 # Selecteer een weerfactor voor de regressie
 weerfactor = st.selectbox("Kies een weerfactor:", ["tavg", "tmin", "tmax", "prcp", "wspd"])
