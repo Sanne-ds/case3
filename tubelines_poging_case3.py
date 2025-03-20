@@ -47,8 +47,8 @@ tab1, tab2 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
 
-    with st.expander("⚙️ Metro Filteropties", expanded=True):
-        filter_option = st.radio("Toon data voor:", ["Weekdagen", "Weekend"])
+    with st.expander("⚙️ **Metro Filteropties**", expanded=True):
+        filter_option = st.radio("**Toon data voor**", ["Weekdagen", "Weekend"])
 
         if filter_option == "Weekdagen":
             metro_data["FilteredEnEx"] = metro_data[["Weekday(Mon-Thu)Entries", "Weekday(Mon-Thu)Exits"]].sum(axis=1)
@@ -57,7 +57,7 @@ with tab1:
 
         # Select slider voor drukte
         drukte_option = st.select_slider(
-            "Selecteer drukte",
+            "**Selecteer drukte**",
             options=["Alle", "Rustig", "Normaal", "Druk"],
             value="Alle"
         )
@@ -71,7 +71,7 @@ with tab1:
         else:
             filtered_data = metro_data
 
-        st.subheader("Kies visualisatie")
+        st.write("**Kies visualisatie**")
         show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
         show_tube_lines = st.checkbox("Metro lijnen", value=True)
 
@@ -159,8 +159,8 @@ with tab1:
 with tab2:
     st.header("🚲 Fietsverhuurstations")
 
-    with st.expander("⚙️ Fiets Filteropties", expanded=True):
-        bike_slider = st.slider("Selecteer het minimum aantal beschikbare fietsen", 0, 100, 0)
+    with st.expander("⚙️ **Fiets Filteropties**", expanded=True):
+        bike_slider = st.slider("**Selecteer het minimum aantal beschikbare fietsen**", 0, 100, 0)
 
     df_cyclestations = pd.read_csv('cycle_stations.csv')
     df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
