@@ -71,6 +71,7 @@ with tab1:
         else:
             filtered_data = metro_data
 
+        st.subheader("Kies visualisatie")
         show_stations = st.checkbox("Metro stations en bezoekersaantal", value=True)
         show_tube_lines = st.checkbox("Metro lijnen", value=True)
 
@@ -160,6 +161,7 @@ with tab2:
 
     with st.expander("⚙️ Fiets Filteropties", expanded=True):
         bike_slider = st.slider("Selecteer het minimum aantal beschikbare fietsen", 0, 100, 0)
+        bike_type = st.radio("Selecteer type fiets", ["Alle", "Normale fietsen", "E-bikes"])
 
     df_cyclestations = pd.read_csv('cycle_stations.csv')
     df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
@@ -172,7 +174,19 @@ with tab2:
         nb_bikes, nb_standard_bikes, nb_ebikes = row['nbBikes'], row['nbStandardBikes'], row['nbEBikes']
         install_date = row['installDateFormatted']
 
-        if nb_bikes >= bike_slider:
+        if bike_type == "Normale fietsen" and nb_standard_bikes >= bike_slider:
+            folium.Marker(
+                location=[lat, long],
+                popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_standard_bikes}<br>Installatiedatum: {install_date}", max_width=300),
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(marker_cluster)
+        elif bike_type == "E-bikes" and nb_ebikes >= bike_slider:
+            folium.Marker(
+                location=[lat, long],
+                popup=folium.Popup(f"Station: {station_name}<br>Aantal e-bikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(marker_cluster)
+        elif bike_type == "Alle" and nb_bikes >= bike_slider:
             folium.Marker(
                 location=[lat, long],
                 popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_bikes}<br>Standaard: {nb_standard_bikes}<br>EBikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
