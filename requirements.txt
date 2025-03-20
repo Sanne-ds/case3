@@ -2,3 +2,6 @@ folium
 streamlit
 pandas
 streamlit_folium
+statsmodels.api
+seaborn
+matplotlib.pyplot
