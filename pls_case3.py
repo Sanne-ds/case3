@@ -288,5 +288,5 @@ with tab3:
         ax.set_title(f"Regressie: {weerfactor} vs. Fietsverhuur\nR² = {r_squared:.2f}")
         ax.text(0.05, 0.9, equation, transform=ax.transAxes, fontsize=12, color="red")
         
-        # Toon de plot in Streamlit
-        st.pyplot(fig)
+    # Toon de plot in Streamlit
+    st.pyplot(fig)
