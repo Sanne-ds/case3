@@ -186,6 +186,28 @@ with tab2:
 
     folium_static(m)
 
+    df = pd.read_csv('bike_1klein.csv')
+
+    # Groeperen op 'Bike Id' en het aantal ritten tellen
+    bike_usage = df.groupby('Bike Id').size().reset_index(name='Aantal keren gebruikt')
+    
+    # Zet 'Bike Id' om naar string voor x-as
+    bike_usage['Bike Id'] = bike_usage['Bike Id'].astype(str)
+    
+    # Sorteren op basis van het aantal keren gebruikt en de top 10 kiezen
+    bike_usage_top10 = bike_usage.sort_values(by='Aantal keren gebruikt', ascending=False).head(10)
+    
+    # Maak de bar chart met Plotly
+    fig = px.bar(
+        bike_usage_top10,  # Data
+        x='Bike Id',  # Fiets ID (nu als string)
+        y='Aantal keren gebruikt',  # Aantal ritten
+        title="Top 10 meest gebruikte fietsen",  # Titel van de grafiek
+        labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},  # Labels
+        text_auto=True  # Toon de aantallen op de balken
+
+        st.plotly_chart(fig)
+
 with tab3:
     st.header("🌤️ Weerdata voor 2021")
 
