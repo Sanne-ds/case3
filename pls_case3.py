@@ -227,7 +227,7 @@ with tab3:
     filtered_data_week = weer_data_2021[weer_data_2021['Week'] == week_nummer]
     
     # Toon de gegevens voor de geselecteerde week
-        if not filtered_data_week.empty:
+    if not filtered_data_week.empty:
         st.write(f"Gegevens voor week {week_nummer} van 2021 (rondom {datum.strftime('%d-%m-%Y')}):")
         
         # Vervang kolomnamen met de vertaalde versie
