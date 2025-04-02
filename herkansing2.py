@@ -191,7 +191,10 @@ with tab2:
     bikes=pd.read_csv('bike_1klein.csv')
     bike_usage = bikes['Bike Id'].value_counts().reset_index()
     bike_usage.columns = ['Bike Id', 'Aantal keren gebruikt']
-    
+   
+    # Zet 'Bike Id' om naar string voor x-as
+    bike_usage['Bike Id'] = bike_usage['Bike Id'].astype(str)
+
     # Toon de top 10 meest gebruikte fietsen
     bike_usage_top10 = bike_usage.sort_values(by='Aantal keren gebruikt', ascending=False).head(10)
     
