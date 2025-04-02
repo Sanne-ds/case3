@@ -248,22 +248,22 @@ with tab3:
         st.dataframe(filtered_data_week_reset[kolommen])
         
         else:
-        st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
-        
-        # Data inladen
-        fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
-        weer_data = pd.read_csv('weather_london.csv')
-        
-        # Zorg ervoor dat de datums in datetime-formaat staan
-        fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
-        weer_data["Date"] = pd.to_datetime(weer_data["Unnamed: 0"])  # Zet de juiste kolomnaam om
-        
-        # Merge de datasets op datum
-        combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date", how="inner")
-        
-        # Verwijder de dubbele datumkolom (we houden "Day")
-        combined_df.drop(columns=["Date"], inplace=True)
-        
+            st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
+            
+            # Data inladen
+            fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
+            weer_data = pd.read_csv('weather_london.csv')
+            
+            # Zorg ervoor dat de datums in datetime-formaat staan
+            fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
+            weer_data["Date"] = pd.to_datetime(weer_data["Unnamed: 0"])  # Zet de juiste kolomnaam om
+            
+            # Merge de datasets op datum
+            combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date", how="inner")
+            
+            # Verwijder de dubbele datumkolom (we houden "Day")
+            combined_df.drop(columns=["Date"], inplace=True)
+            
         # Streamlit-app titel
         st.header("Correlatie tussen fietsverhuur en weer")
         
