@@ -373,14 +373,14 @@ with tab4:
                   'bike_9klein.csv', 'bike_10klein.csv', 'bike_11klein.csv', 'bike_12klein.csv']
     
     # Maandnamen voor de dropdown, inclusief de optie 'All year'
-    month_names = ['All year', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
-                   'September', 'October', 'November', 'December']
+    month_names = ['Geheel jaar', 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 
+                   'September', 'Oktober', 'November', 'December']
     
     # Maak een dictionary om bestanden te koppelen aan maandnamen
     file_month_dict = dict(zip(month_names[1:], file_names))  # Skip 'All year' voor file mapping
     
     # Streamlit interface
-    st.title('Bike Rental Analysis')
+    st.title('Fietsen die een beetje liefde en olie kunnen gebruiken')
     
     # Dropdown menu voor maandselectie
     month_name = st.selectbox('Selecteer een maand:', month_names)
