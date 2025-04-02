@@ -289,4 +289,4 @@ with tab3:
     ax.text(0.05, 0.9, equation, transform=ax.transAxes, fontsize=12, color="red")
             
     # Toon de plot in Streamlit
-    st.pyplot(fig)
+        st.pyplot(fig)
