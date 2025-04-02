@@ -5,4 +5,4 @@ streamlit_folium
 seaborn
 matplotlib
 statsmodels
-plotlyexpress
+plotly express
