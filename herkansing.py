@@ -6,6 +6,7 @@ from folium.plugins import MarkerCluster
 import seaborn as sns
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
+import plotly.express as px
 
 # Data inladen
 bestanden = ['2021_Q2_Central.csv', '2021_Q3_Central.csv', '2021_Q4_Central.csv']
