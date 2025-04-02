@@ -191,7 +191,13 @@ with tab2:
     bikes=pd.read_csv('bike_1klein.csv')
     bike_usage = bikes['Bike Id'].value_counts().reset_index()
     bike_usage.columns = ['Bike Id', 'Aantal keren gebruikt']
-   
+    
+    # Zet de 'Start Date' om naar datetime 
+    df['Start Date'] = pd.to_datetime(df['Start Date'], format='%d/%m/%Y %H:%M')
+
+    # Groeperen op 'Bike Id' en het aantal ritten tellen
+    bike_usage = df.groupby('Bike Id').size().reset_index(name='Aantal keren gebruikt')
+    
     # Zet 'Bike Id' om naar string voor x-as
     bike_usage['Bike Id'] = bike_usage['Bike Id'].astype(str)
 
