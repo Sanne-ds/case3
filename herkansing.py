@@ -193,7 +193,7 @@ with tab2:
     bike_usage.columns = ['Bike Id', 'Aantal keren gebruikt']
     
     # Toon de top 10 meest gebruikte fietsen
-    print(bike_usage.head(10))
+    bike_usage_top10 = bike_usage.sort_values(by='Aantal keren gebruikt', ascending=False).head(10)
     
     # Maak een bar chart van de top 10 meest gebruikte fietsen
     plt.figure(figsize=(10, 6))
