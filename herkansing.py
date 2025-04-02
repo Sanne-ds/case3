@@ -195,25 +195,17 @@ with tab2:
     # Toon de top 10 meest gebruikte fietsen
     bike_usage_top10 = bike_usage.sort_values(by='Aantal keren gebruikt', ascending=False).head(10)
     
-    # Maak een bar chart van de top 10 meest gebruikte fietsen
-    plt.figure(figsize=(10, 6))
-    sns.barplot(
-    x='Bike Id',  # Fiets ID op de x-as
-    y='Aantal keren gebruikt',  # Aantal ritten op de y-as
-    data=bike_usage_top10,  # Data
-    palette='Blues_d'  # Kleurenschema (kan aangepast worden)
-)
-
-# Voeg titels en labels toe aan de grafiek
-plt.title("Top 10 meest gebruikte fietsen")
-plt.xlabel('Fiets ID')
-plt.ylabel('Aantal ritten')
-
-# Toon de grafiek in Streamlit
-st.pyplot(plt)
-
-# Laat de top 10 fietsen ook als tabel zien
-st.dataframe(bike_usage_top10)
+        fig = px.bar(
+            bike_usage_top10,  # Data
+            x='Bike Id',  # Fiets ID
+            y='Aantal keren gebruikt',  # Aantal ritten
+            title="Top 10 meest gebruikte fietsen",  # Titel van de grafiek
+            labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},  # Labels
+            text_auto=True  # Toon de aantallen op de balken
+        )
+        
+        # Toon de grafiek in Streamlit
+        st.plotly_chart(fig)
 
 
 with tab3:
