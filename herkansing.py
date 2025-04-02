@@ -45,7 +45,7 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs aanmaken
-tab1, tab2, tab3 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weerdata"])
+tab1, tab2, tab3, tab4 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weerdata", "Conclusies"])
 
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
@@ -185,6 +185,28 @@ with tab2:
 
     folium_static(m)
 
+    st.header("🚲 Meest gebruikte fietsen")
+
+    bike_usage = data['Bike Id'].value_counts().reset_index()
+    bike_usage.columns = ['Bike Id', 'Aantal keren gebruikt']
+    
+    # Toon de top 10 meest gebruikte fietsen
+    print(bike_usage.head(10))
+    
+    # Maak een bar chart van de top 10 meest gebruikte fietsen
+    fig = px.bar(
+        bike_usage.head(10), 
+        x='Bike Id', 
+        y='Aantal keren gebruikt', 
+        title="Top 10 meest gebruikte fietsen",
+        labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},
+        text_auto=True
+    )
+    
+    st.plotly_chart(fig)  # Toon de grafiek in Streamlit
+    st.dataframe(bike_usage.head(10))  # Laat de data ook als tabel zien
+
+
 with tab3:
     st.header("🌤️ Weerdata voor 2021")
 
@@ -301,3 +323,6 @@ with tab3:
     
     # Toon de plot in Streamlit
     st.pyplot(fig)
+
+with tab4
+    
