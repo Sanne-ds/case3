@@ -46,7 +46,7 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs aanmaken
-tab1, tab2, tab3, tab4 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weerdata", "Maintenance"])
+tab1, tab2, tab3, tab4 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstations", "🌤️ Weerdata", "🔧 Onderhoud"])
 
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
@@ -357,8 +357,8 @@ with tab4:
             plt.figure(figsize=(10,6))
             plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['total_duration_hours'])
             plt.xlabel('Bike ID')
-            plt.ylabel('Totale Huurduur (uren)')
-            plt.title(f'Top 20 Bike IDs met de Langste Verhuurtijden in de Maand ({month_name})')
+            plt.ylabel('Aantal uur gebruikt')
+            plt.title(f'Meest gebruikte fietsen in ({month_name})')
             plt.xticks(rotation=90)
     
             # Zet de limieten van de y-as vast (bijvoorbeeld van 0 tot 250 uur)
@@ -380,7 +380,7 @@ with tab4:
     file_month_dict = dict(zip(month_names[1:], file_names))  # Skip 'All year' voor file mapping
     
     # Streamlit interface
-    st.title('Fietsen die een beetje liefde en olie kunnen gebruiken')
+    st.header('Fietsen die een beetje liefde en olie kunnen gebruiken')
     
     # Dropdown menu voor maandselectie
     month_name = st.selectbox('Selecteer een maand:', month_names)
