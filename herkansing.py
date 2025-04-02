@@ -323,6 +323,3 @@ with tab3:
     
     # Toon de plot in Streamlit
     st.pyplot(fig)
-
-with tab4
-    
