@@ -204,8 +204,10 @@ with tab2:
         y='Aantal keren gebruikt',  # Aantal ritten
         title="Top 10 meest gebruikte fietsen",  # Titel van de grafiek
         labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},  # Labels
-        text_auto=True)  # Toon de aantallen op de balken
-
+        text_auto=True  # Toon de aantallen op de balken
+    )
+    
+    # Toon de grafiek in Streamlit
     st.plotly_chart(fig)
 
 with tab3:
