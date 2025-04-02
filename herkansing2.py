@@ -206,7 +206,7 @@ with tab2:
         labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},  # Labels
         text_auto=True)  # Toon de aantallen op de balken
 
-        st.plotly_chart(fig)
+    st.plotly_chart(fig)
 
 with tab3:
     st.header("🌤️ Weerdata voor 2021")
