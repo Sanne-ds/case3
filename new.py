@@ -330,7 +330,7 @@ with tab4:
             plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
             plt.xlabel('Bike ID')
             plt.ylabel('Aantal Verhuur')
-            plt.title(f'Top 20 Bike IDs met de Meeste Verhuur in het Jaar')
+            plt.title(f'De meest gebruikte fietsen van het jaar')
             plt.xticks(rotation=90)
             
         else:
