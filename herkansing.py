@@ -187,7 +187,7 @@ with tab2:
 
     st.header("🚲 Meest gebruikte fietsen")
 
-    bikes=pd.read_csv('fietsdata2021.csv')
+    bikes=pd.read_csv('compressed_data.csv')
     bike_usage = bikes['Bike Id'].value_counts().reset_index()
     bike_usage.columns = ['Bike Id', 'Aantal keren gebruikt']
     
