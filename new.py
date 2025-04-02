@@ -380,7 +380,7 @@ with tab4:
     file_month_dict = dict(zip(month_names[1:], file_names))  # Skip 'All year' voor file mapping
     
     # Streamlit interface
-    st.header('Tijd voor wat olie op de ketting')
+    st.header('🔧 Tijd voor wat olie op de ketting')
     
     # Dropdown menu voor maandselectie
     month_name = st.selectbox('Selecteer een maand:', month_names)
