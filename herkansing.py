@@ -195,17 +195,17 @@ with tab2:
     # Toon de top 10 meest gebruikte fietsen
     bike_usage_top10 = bike_usage.sort_values(by='Aantal keren gebruikt', ascending=False).head(10)
     
-        fig = px.bar(
-            bike_usage_top10,  # Data
-            x='Bike Id',  # Fiets ID
-            y='Aantal keren gebruikt',  # Aantal ritten
-            title="Top 10 meest gebruikte fietsen",  # Titel van de grafiek
-            labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},  # Labels
-            text_auto=True  # Toon de aantallen op de balken
-        )
-        
-        # Toon de grafiek in Streamlit
-        st.plotly_chart(fig)
+    fig = px.bar(
+        bike_usage_top10,  # Data
+        x='Bike Id',  # Fiets ID
+        y='Aantal keren gebruikt',  # Aantal ritten
+        title="Top 10 meest gebruikte fietsen",  # Titel van de grafiek
+        labels={'Bike Id': 'Fiets ID', 'Aantal keren gebruikt': 'Aantal ritten'},  # Labels
+        text_auto=True  # Toon de aantallen op de balken
+    )
+    
+    # Toon de grafiek in Streamlit
+    st.plotly_chart(fig)
 
 
 with tab3:
