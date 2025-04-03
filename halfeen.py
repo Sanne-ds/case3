@@ -226,60 +226,28 @@ with tab3:
         'Ride Count': ride_counts
     })
     
-    # Dropdown voor kiezen tussen de grafiekopties
-    grafiek_optie = st.selectbox("Kies een grafiekoptie", ['Gemiddelde duur', 'Aantal ritjes', 'Beide'])
+    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+    fig_avg_duration = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
+                               title='Gemiddelde ritjesduur (Minuten)',
+                               labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
     
-    # Afhankelijk van de keuze in de dropdown, genereer de bijbehorende grafiek
-    if grafiek_optie == 'Gemiddelde duur':
-        # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
-        fig_avg_duration = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
-                                   title='Gemiddelde ritjesduur (Minuten)',
-                                   labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
-        # Zorg ervoor dat de maanden als categorieën worden behandeld
-        fig_avg_duration.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 90 graden
-        # Pas de y-as aan zodat deze van 10 tot 30 gaat
-        fig_avg_duration.update_yaxes(range=[10, 30])
-        # Toon de grafiek
-        st.plotly_chart(fig_avg_duration)
+    # Zorg ervoor dat de maanden als categorieën worden behandeld
+    fig_avg_duration.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 90 graden
     
-    elif grafiek_optie == 'Aantal ritjes':
-        # Maak een Plotly bar plot van het aantal ritjes per maand
-        fig_ride_count = px.bar(avg_df, x='Month', y='Ride Count',
-                                title='Aantal Ritjes per Maand',
-                                labels={'Month': 'Maand', 'Ride Count': 'Aantal Ritjes'})
-        # Zorg ervoor dat de maanden als categorieën worden behandeld
-        fig_ride_count.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 45 graden
-        # Toon de grafiek
-        st.plotly_chart(fig_ride_count)
+    # Pas de y-as aan zodat deze van 10 tot 30 gaat
+    fig_avg_duration.update_yaxes(range=[10, 30])
     
-    elif grafiek_optie == 'Beide':
-        # Maak een figure met dubbele y-assen
-        fig = go.Figure()
+    # Maak een Plotly bar plot van het aantal ritjes per maand
+    fig_ride_count = px.line(avg_df, x='Month', y='Ride Count',
+                            title='Aantal Ritjes per Maand',
+                            labels={'Month': 'Maand', 'Ride Count': 'Aantal Ritjes'})
     
-        # Voeg de lijn voor gemiddelde duur toe (eerste y-as)
-        fig.add_trace(go.Scatter(x=avg_df['Month'], y=avg_df['Average Duration (Minutes)'],
-                                 mode='lines', name='Gemiddelde Duur (Minuten)',
-                                 line=dict(color='blue')))
+    # Zorg ervoor dat de maanden als categorieën worden behandeld
+    fig_ride_count.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 45 graden
     
-        # Voeg de bar voor het aantal ritjes toe (tweede y-as)
-        fig.add_trace(go.Bar(x=avg_df['Month'], y=avg_df['Ride Count'],
-                             name='Aantal Ritjes', marker=dict(color='orange'),
-                             yaxis='y2'))  # Zorg ervoor dat de staven de tweede y-as gebruiken
-    
-        # Voeg dubbele y-assen toe
-        fig.update_layout(
-            title='Gemiddelde Duur en Aantal Ritjes per Maand',
-            xaxis=dict(title='Maand'),
-            yaxis=dict(title='Gemiddelde Duur (Minuten)', range=[10, 30], side='left', showgrid=True),
-            yaxis2=dict(title='Aantal Ritjes', overlaying='y', side='right', showgrid=False),
-            barmode='group',
-            xaxis_tickangle=45
-        )
-    
-        # Toon de grafiek
-        st.plotly_chart(fig)
-
-
+    # Toon de plots in Streamlit
+    st.plotly_chart(fig_avg_duration)
+    st.plotly_chart(fig_ride_count)
 
 
 with tab4:
@@ -485,5 +453,3 @@ with tab5:
     # Plot de grafiek op basis van de geselecteerde maand
     plot_bike_data(month_name)
     
-
-
