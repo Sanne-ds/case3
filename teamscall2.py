@@ -465,7 +465,6 @@ with tab5:
                     'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 'Windrichting (°)', 
                     'Windsnelheid (m/s)', 'Windstoten (m/s)', 'Luchtdruk (hPa)', 'Zonduur (uren)']
         
-        st.dataframe(filtered_data_week_reset[kolommen])
 
     else:
         st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
