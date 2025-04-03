@@ -47,9 +47,9 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation", "🚴 Ritjes", "🔧 Onderhoud", "🌤️ Weerdata"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["inleiding","🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation", "🚴 Ritjes", "🔧 Onderhoud", "🌤️ Weerdata"])
 
-with tab1:
+with tab2:
     st.header("🚇 Metro Stations en Lijnen")
 
     with st.expander("⚙ *Metro Filteropties*", expanded=True):
@@ -161,7 +161,7 @@ with tab1:
 
     folium_static(m)
 
-with tab2:
+with tab3:
     
     st.header("🚲 Fietsverhuurstations")
     df_cyclestations = pd.read_csv('cycle_stations.csv')
@@ -212,7 +212,7 @@ with tab2:
     
     folium_static(m)
 
-with tab3:
+with tab4:
     
     # Streamlit titel
     st.header("🚴 Ritjes")
@@ -320,7 +320,7 @@ with tab3:
         )
         st.plotly_chart(fig_combined)
 
-with tab4:
+with tab5:
        # grafiek plotten
     def plot_bike_data(month_name):
         if month_name == 'All year':
@@ -405,7 +405,7 @@ with tab4:
     # Plot de grafiek op basis van de geselecteerde maand
     plot_bike_data(month_name)
 
-with tab5:
+with tab6:
     
     st.header("🌤️ Weerdata voor 2021")
 
