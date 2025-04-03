@@ -264,6 +264,7 @@ with tab3:
             gridcolor='lightgray',  # Lichtere gridkleur
             ticks="inside",  # Ticks aan de binnenkant van de grafiek
             dtick=5,  # Ticks elke 5 ritjes voor het aantal ritjes
+            range=[0, max(ride_counts) + 5],  # Zorg ervoor dat de range van de rechter Y-as goed is ingesteld
             showline=True,  # Zorg ervoor dat de lijn van de y-as zichtbaar is
             linecolor='red'  # Geef de lijn een kleur zodat hij zichtbaar is
         ),
@@ -272,9 +273,6 @@ with tab3:
     
     # Toon de grafiek in Streamlit
     st.plotly_chart(fig)
-
-
-
 
 with tab4:
     
