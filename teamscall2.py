@@ -164,54 +164,52 @@ with tab1:
 with tab2:
     
     st.header("🚲 Fietsverhuurstations")
-
-        with st.expander("⚙ *Fiets Filteropties*", expanded=True):
+    with st.expander("⚙ *Fiets Filteropties*", expanded=True):
         bike_slider = st.slider("*Selecteer het minimum aantal beschikbare fietsen*", 0, 100, 0)
         filter_standard = st.checkbox("Toon alleen stations met standaard fietsen", value=False)
         filter_ebike = st.checkbox("Toon alleen stations met e-bikes", value=False)
     
-        df_cyclestations = pd.read_csv('cycle_stations.csv')
-        df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
-        
-        m = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
-        marker_cluster = MarkerCluster().add_to(m)
-        
-        for index, row in df_cyclestations.iterrows():
-            lat, long, station_name = row['lat'], row['long'], row['name']
-            nb_bikes, nb_standard_bikes, nb_ebikes = row['nbBikes'], row['nbStandardBikes'], row['nbEBikes']
-            install_date = row['installDateFormatted']
-        
-            # Filter op het minimum aantal fietsen
-            if nb_bikes >= bike_slider:
-                # Extra filtering op e-bikes en standaard fietsen
-                if (not filter_standard or nb_standard_bikes > 0) and (not filter_ebike or nb_ebikes > 0):
-                    folium.Marker(
-                        location=[lat, long],
-                        popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_bikes}<br>Standaard: {nb_standard_bikes}<br>EBikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
-                        icon=folium.Icon(color='blue', icon='info-sign')
-                    ).add_to(marker_cluster)
-        
-        folium_static(m)
-        
-        # Bereken het totaal aantal fietsen, standaard fietsen en e-bikes
-        total_bikes = df_cyclestations['nbBikes'].sum()
-        total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
-        total_ebikes = df_cyclestations['nbEBikes'].sum()
-        
-        # Bereken de percentages
-        percentage_standard_bikes = (total_standard_bikes / total_bikes * 100) if total_bikes > 0 else 0
-        percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
-        
-        # Toon de percentages in vakjes onderaan de pagina
-        st.write("### Percentage Fietsen")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric("Standaard Fietsen", f"{total_standard_bikes} fietsen", f"{percentage_standard_bikes:.2f}%")
-        
-        with col2:
-            st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
-
+    df_cyclestations = pd.read_csv('cycle_stations.csv')
+    df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
+    
+    m = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
+    marker_cluster = MarkerCluster().add_to(m)
+    
+    for index, row in df_cyclestations.iterrows():
+        lat, long, station_name = row['lat'], row['long'], row['name']
+        nb_bikes, nb_standard_bikes, nb_ebikes = row['nbBikes'], row['nbStandardBikes'], row['nbEBikes']
+        install_date = row['installDateFormatted']
+    
+        # Filter op het minimum aantal fietsen
+        if nb_bikes >= bike_slider:
+            # Extra filtering op e-bikes en standaard fietsen
+            if (not filter_standard or nb_standard_bikes > 0) and (not filter_ebike or nb_ebikes > 0):
+                folium.Marker(
+                    location=[lat, long],
+                    popup=folium.Popup(f"Station: {station_name}<br>Aantal fietsen: {nb_bikes}<br>Standaard: {nb_standard_bikes}<br>EBikes: {nb_ebikes}<br>Installatiedatum: {install_date}", max_width=300),
+                    icon=folium.Icon(color='blue', icon='info-sign')
+                ).add_to(marker_cluster)
+    
+    folium_static(m)
+    
+    # Bereken het totaal aantal fietsen, standaard fietsen en e-bikes
+    total_bikes = df_cyclestations['nbBikes'].sum()
+    total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
+    total_ebikes = df_cyclestations['nbEBikes'].sum()
+    
+    # Bereken de percentages
+    percentage_standard_bikes = (total_standard_bikes / total_bikes * 100) if total_bikes > 0 else 0
+    percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
+    
+    # Toon de percentages in vakjes onderaan de pagina
+    st.write("### Percentage Fietsen")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric("Standaard Fietsen", f"{total_standard_bikes} fietsen", f"{percentage_standard_bikes:.2f}%")
+    
+    with col2:
+        st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
 
 with tab3:
     
