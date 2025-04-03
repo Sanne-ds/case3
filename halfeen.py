@@ -436,4 +436,10 @@ with tab5:
     st.header('🔧 Tijd voor wat olie op de ketting')
     
     # Dropdown menu voor maandselectie
+    month_name = st.selectbox('Selecteer een maand:', month_names)
     
+    # Dropdown menu voor fietsgebruik selectie
+    bike_usage = st.selectbox('Selecteer de fietsgebruikcategorie:', ['Meest gebruikt', 'Minst gebruikt'])
+    
+    # Plot de grafiek op basis van de geselecteerde maand en fietsgebruik
+    plot_bike_data(month_name, bike_usage)
