@@ -46,7 +46,7 @@ low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
 # Tabs aanmaken
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation","🚴 Ritjes" "🌤️ Weerdata", "🔧 Onderhoud"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation", "🚴 Ritjes", "🌤️ Weerdata", "🔧 Onderhoud"])
 
 with tab1:
     st.header("🚇 Metro Stations en Lijnen")
