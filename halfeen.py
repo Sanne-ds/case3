@@ -239,17 +239,38 @@ with tab3:
                              mode='lines+markers', name='Aantal Ritjes', 
                              line=dict(color='red'), yaxis="y2"))
     
-    # Voeg titels en labels toe
+    # Voeg titels en labels toe en pas de rasterlijnen en ticks aan
     fig.update_layout(
         title="Gemiddelde Duur en Aantal Ritjes per Maand",
-        xaxis=dict(title="Maand"),
-        yaxis=dict(title="Gemiddelde Duur (Minuten)", range=[10, 30]),  # Primaire Y-as
-        yaxis2=dict(title="Aantal Ritjes", overlaying="y", side="right"),  # Secundaire Y-as
-        xaxis_tickangle=45
+        xaxis=dict(
+            title="Maand",
+            tickangle=45,  # Draai de maandnamen
+            showgrid=True,  # Horizontale rasters tonen
+            gridcolor='lightgray',  # Lichtere gridkleur
+        ),
+        yaxis=dict(
+            title="Gemiddelde Duur (Minuten)", 
+            range=[10, 30],  # Primaire Y-as
+            showgrid=True,  # Horizontale rasters tonen
+            gridcolor='lightgray',  # Lichtere gridkleur
+            ticks="inside",  # Ticks aan de binnenkant van de grafiek
+            dtick=2  # Ticks elke 2 minuten voor de gemiddelde duur
+        ),
+        yaxis2=dict(
+            title="Aantal Ritjes", 
+            overlaying="y", 
+            side="right",  # Secundaire Y-as aan de rechterkant
+            showgrid=True,  # Horizontale rasters tonen
+            gridcolor='lightgray',  # Lichtere gridkleur
+            ticks="inside",  # Ticks aan de binnenkant van de grafiek
+            dtick=5  # Ticks elke 5 ritjes voor het aantal ritjes
+        ),
+        xaxis_tickangle=45,  # Draai de maandnamen
     )
     
     # Toon de grafiek in Streamlit
     st.plotly_chart(fig)
+
 
 
 
