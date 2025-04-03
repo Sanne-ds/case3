@@ -263,7 +263,9 @@ with tab3:
             showgrid=True,  # Horizontale rasters tonen
             gridcolor='lightgray',  # Lichtere gridkleur
             ticks="inside",  # Ticks aan de binnenkant van de grafiek
-            dtick=5  # Ticks elke 5 ritjes voor het aantal ritjes
+            dtick=5,  # Ticks elke 5 ritjes voor het aantal ritjes
+            showline=True,  # Zorg ervoor dat de lijn van de y-as zichtbaar is
+            linecolor='red'  # Geef de lijn een kleur zodat hij zichtbaar is
         ),
         xaxis_tickangle=45,  # Draai de maandnamen
     )
