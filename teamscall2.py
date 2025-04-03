@@ -487,7 +487,7 @@ with tab5:
             y='Aantal Verhuurde Fietsen', 
             markers=True, 
             title=f"Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
-            line_shape='linear'
+            line_shape='linear',
             color_discrete_sequence=['red']
         )
         fig.update_yaxes(title_text="Aantal Verhuurde Fietsen", range=[filtered_data_week_reset['Aantal Verhuurde Fietsen'].min() - 2000, filtered_data_week_reset['Aantal Verhuurde Fietsen'].max() + 2000])
