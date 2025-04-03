@@ -188,17 +188,27 @@ with tab2:
 
     folium_static(m)
 
-# Toont de percentages in vakjes onderaan de pagina
+# Hieronder komt de nieuwe code die je vroeg:
+     # Bereken het totaal aantal fietsen, standaard fietsen, en ebikes
+    total_bikes = df_cyclestations['nbBikes'].sum()
+    total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
+    total_ebikes = df_cyclestations['nbEBikes'].sum()
+ 
+     # Bereken de percentages van de standaard fietsen en ebikes
+    percentage_standard_bikes = (total_standard_bikes / total_bikes * 100) if total_bikes > 0 else 0
+    percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
+ 
+     # Toont de percentages in vakjes onderaan de pagina
     st.write("### Percentage Fietsen")
-    
-    # Maak twee kolommen voor de percentages
+ 
+     # Maak twee kolommen voor de percentages
     col1, col2 = st.columns(2)
-    
+ 
     with col1:
-        st.write(f"*Standaard Fietsen*: {total_standard_bikes} fietsen ({percentage_standard_bikes:.2f}%)")
-    
+        st.metric("Standaard Fietsen", f"{total_standard_bikes} fietsen", f"{percentage_standard_bikes:.2f}%")
+     
     with col2:
-        st.write(f"*Elektrische Fietsen*: {total_ebikes} fietsen ({percentage_ebikes:.2f}%)")
+        st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
 
 with tab3:
     
