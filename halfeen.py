@@ -351,7 +351,7 @@ with tab4:
     st.pyplot(fig)
 
 with tab5:
-    
+
     # Functie om de grafiek te plotten op basis van het geselecteerde bestand
     def plot_bike_data(month_name, bike_usage):
         if month_name == 'All year':
@@ -364,9 +364,9 @@ with tab5:
                 rental_count=('Bike Id', 'count')
             ).reset_index()
     
-            # Als we de minst gebruikte fietsen willen tonen, sorteer op rental_count (oplopend)
+            # Als we de minst gebruikte fietsen willen tonen, sorteer op total_duration (oplopend)
             if bike_usage == 'Minst gebruikt':
-                bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=True)
+                bike_duration_sorted = bike_duration.sort_values(by='total_duration', ascending=True)  # Sorteren op totale huurduur
             else:
                 # Sorteer op het aantal verhuur (meest gebruikt)
                 bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
@@ -374,11 +374,14 @@ with tab5:
             # Selecteer de top 20
             top_20_bike_ids = bike_duration_sorted.head(20)
             
-            # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur
+            # Zet de totale huurduur om naar uren (optioneel)
+            top_20_bike_ids['total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
+    
+            # Plot een histogram van de top 20 Bike Id's op basis van de huurduur
             plt.figure(figsize=(10,6))
-            plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
+            plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['total_duration_hours'])
             plt.xlabel('Bike ID')
-            plt.ylabel('Aantal Verhuur')
+            plt.ylabel('Aantal Uur Gebruikt')
             plt.title(f'{bike_usage} fietsen van het jaar')
             plt.xticks(rotation=90)
             
@@ -393,9 +396,9 @@ with tab5:
                 rental_count=('Bike Id', 'count')
             ).reset_index()
     
-            # Als we de minst gebruikte fietsen willen tonen, sorteer op rental_count (oplopend)
+            # Als we de minst gebruikte fietsen willen tonen, sorteer op total_duration (oplopend)
             if bike_usage == 'Minst gebruikt':
-                bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=True)
+                bike_duration_sorted = bike_duration.sort_values(by='total_duration', ascending=True)  # Sorteren op totale huurduur
             else:
                 # Sorteer op het aantal verhuur (meest gebruikt)
                 bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
@@ -406,15 +409,15 @@ with tab5:
             # Zet de totale huurduur om naar uren (optioneel)
             top_20_bike_ids['total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
     
-            # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur (of duur)
+            # Plot een histogram van de top 20 Bike Id's op basis van de huurduur (in uren)
             plt.figure(figsize=(10,6))
-            plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
+            plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['total_duration_hours'])
             plt.xlabel('Bike ID')
-            plt.ylabel('Aantal Verhuur')
+            plt.ylabel('Aantal Uur Gebruikt')
             plt.title(f'{bike_usage} fietsen in {month_name}')
             plt.xticks(rotation=90)
     
-            # Zet de limieten van de y-as vast (bijvoorbeeld van 0 tot 250 verhuur)
+            # Zet de limieten van de y-as vast (bijvoorbeeld van 0 tot 250 uur)
             plt.ylim(0, 250)
         
         # Toon de plot
@@ -443,3 +446,4 @@ with tab5:
     
     # Plot de grafiek op basis van de geselecteerde maand en fietsgebruik
     plot_bike_data(month_name, bike_usage)
+
