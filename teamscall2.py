@@ -471,98 +471,115 @@ with tab5:
 
 
     # Selectbox om grafieken te kiezen
-    grafiek_keuze = st.selectbox('Kies welke grafiek je wilt zien:', 
-                                 ['Aantal Verhuurde Fietsen per Dag', 
-                                  'Gemiddelde Temperatuur per Dag', 
-                                  'Neerslag per Dag', 
-                                  'Sneeuwval per Dag'])
-
+    grafiek_keuze = st.selectbox(
+        'Kies welke grafiek je wilt zien:',
+        ['Aantal Verhuurde Fietsen per Dag',
+         'Gemiddelde Temperatuur per Dag',
+         'Neerslag per Dag',
+         'Sneeuwval per Dag']
+    )
+    
     # Toon de gekozen grafiek
     if grafiek_keuze == 'Aantal Verhuurde Fietsen per Dag':
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.lineplot(data=filtered_data_week_reset, x='Date', y='Aantal Verhuurde Fietsen', marker='o', ax=ax, color='blue')
-        ax.set_xlabel("Datum")
-        ax.set_ylabel("Aantal Verhuurde Fietsen", color='blue')
-        ax.set_title(f"Aantal Verhuurde Fietsen per Dag in Week {week_nummer}")
-        ax.tick_params(axis='y', labelcolor='blue')
-        
-        # Stel de limieten van de y-as in zodat er altijd 2000 extra ruimte is
-        min_fietsen = filtered_data_week_reset['Aantal Verhuurde Fietsen'].min()
-        max_fietsen = filtered_data_week_reset['Aantal Verhuurde Fietsen'].max()
-        ax.set_ylim(min_fietsen - 2000, max_fietsen + 2000)  # 2000 extra ruimte onder en boven de data
-        
-        plt.xticks(rotation=45)
-        st.pyplot(fig)
-
+        fig = px.line(
+            filtered_data_week_reset, 
+            x='Date', 
+            y='Aantal Verhuurde Fietsen', 
+            markers=True, 
+            title=f"Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
+            line_shape='linear'
+        )
+        fig.update_yaxes(title_text="Aantal Verhuurde Fietsen", range=[filtered_data_week_reset['Aantal Verhuurde Fietsen'].min() - 2000, filtered_data_week_reset['Aantal Verhuurde Fietsen'].max() + 2000])
+        st.plotly_chart(fig)
+    
     elif grafiek_keuze == 'Gemiddelde Temperatuur per Dag':
-        fig, ax1 = plt.subplots(figsize=(10, 6))
-        # Plot voor Gemiddelde Temperatuur aan de linker y-as
-        sns.lineplot(data=filtered_data_week_reset, x='Date', y='Gemiddelde Temperatuur (°C)', marker='o', ax=ax1, color='orange')
-        ax1.set_xlabel("Datum")
-        ax1.set_ylabel("Gemiddelde Temperatuur (°C)", color='orange')
-        ax1.tick_params(axis='y', labelcolor='orange')
-
-        # Stel de limieten van de y-as voor Temperatuur in zodat er altijd 2 extra ruimte is
-        min_temp = filtered_data_week_reset['Gemiddelde Temperatuur (°C)'].min()
-        max_temp = filtered_data_week_reset['Gemiddelde Temperatuur (°C)'].max()
-        ax1.set_ylim(min_temp - 2, max_temp + 2)  # 2 extra ruimte onder en boven de data
-
-        # Maak een tweede y-as voor Aantal Verhuurde Fietsen
-        ax2 = ax1.twinx()
-        sns.lineplot(data=filtered_data_week_reset, x='Date', y='Aantal Verhuurde Fietsen', marker='o', ax=ax2, color='blue', label='Aantal Verhuurde Fietsen')
-        ax2.set_ylabel("Aantal Verhuurde Fietsen", color='blue')
-        ax2.tick_params(axis='y', labelcolor='blue')
-
-        ax1.set_title(f"Gemiddelde Temperatuur en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}")
-        plt.xticks(rotation=45)
-        st.pyplot(fig)
-
+        fig = go.Figure()
+        
+        # Gemiddelde temperatuur
+        fig.add_trace(go.Scatter(
+            x=filtered_data_week_reset['Date'],
+            y=filtered_data_week_reset['Gemiddelde Temperatuur (°C)'],
+            mode='lines+markers',
+            name='Gemiddelde Temperatuur (°C)',
+            line=dict(color='orange')
+        ))
+        
+        # Aantal verhuurde fietsen
+        fig.add_trace(go.Scatter(
+            x=filtered_data_week_reset['Date'],
+            y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
+            mode='lines+markers',
+            name='Aantal Verhuurde Fietsen',
+            line=dict(color='blue'),
+            yaxis='y2'
+        ))
+        
+        fig.update_layout(
+            title=f"Gemiddelde Temperatuur en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
+            xaxis_title='Datum',
+            yaxis=dict(title='Gemiddelde Temperatuur (°C)', titlefont=dict(color='orange')),
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
+        )
+        st.plotly_chart(fig)
+    
     elif grafiek_keuze == 'Neerslag per Dag':
-        fig, ax1 = plt.subplots(figsize=(10, 6))
-        # Plot voor Neerslag aan de linker y-as
-        sns.barplot(data=filtered_data_week_reset, x='Date', y='Neerslag (mm)', ax=ax1, color='blue')
-        ax1.set_xlabel("Datum")
-        ax1.set_ylabel("Neerslag (mm)", color='blue')
-        ax1.tick_params(axis='y', labelcolor='blue')
-
-        # Stel de limieten van de y-as voor Neerslag in zodat er altijd 0.5 extra ruimte is
-        min_neerslag = filtered_data_week_reset['Neerslag (mm)'].min()
-        max_neerslag = filtered_data_week_reset['Neerslag (mm)'].max()
-        ax1.set_ylim(min_neerslag - 0.5, max_neerslag + 0.5)  # 0.5 extra ruimte onder en boven de data
-
-        # Maak een tweede y-as voor Aantal Verhuurde Fietsen
-        ax2 = ax1.twinx()
-        sns.lineplot(data=filtered_data_week_reset, x='Date', y='Aantal Verhuurde Fietsen', marker='o', ax=ax2, color='red', label='Aantal Verhuurde Fietsen')
-        ax2.set_ylabel("Aantal Verhuurde Fietsen", color='red')
-        ax2.tick_params(axis='y', labelcolor='red')
-
-        ax1.set_title(f"Neerslag en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}")
-        plt.xticks(rotation=45)
-        st.pyplot(fig)
-
+        fig = go.Figure()
+        
+        # Neerslag als staafdiagram
+        fig.add_trace(go.Bar(
+            x=filtered_data_week_reset['Date'],
+            y=filtered_data_week_reset['Neerslag (mm)'],
+            name='Neerslag (mm)',
+            marker_color='blue'
+        ))
+        
+        # Aantal verhuurde fietsen als lijn
+        fig.add_trace(go.Scatter(
+            x=filtered_data_week_reset['Date'],
+            y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
+            mode='lines+markers',
+            name='Aantal Verhuurde Fietsen',
+            line=dict(color='red'),
+            yaxis='y2'
+        ))
+        
+        fig.update_layout(
+            title=f"Neerslag en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
+            xaxis_title='Datum',
+            yaxis=dict(title='Neerslag (mm)', titlefont=dict(color='blue')),
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='red'))
+        )
+        st.plotly_chart(fig)
+    
     elif grafiek_keuze == 'Sneeuwval per Dag':
-        fig, ax1 = plt.subplots(figsize=(10, 6))
-        # Plot voor Sneeuwval aan de linker y-as
-        sns.lineplot(data=filtered_data_week_reset, x='Date', y='Sneeuwval (cm)', marker='o', ax=ax1, color='green')
-        ax1.set_xlabel("Datum")
-        ax1.set_ylabel("Sneeuwval (cm)", color='green')
-        ax1.tick_params(axis='y', labelcolor='green')
-
-        # Maak een tweede y-as voor Aantal Verhuurde Fietsen
-        ax2 = ax1.twinx()
-        sns.lineplot(data=filtered_data_week_reset, x='Date', y='Aantal Verhuurde Fietsen', marker='o', ax=ax2, color='blue', label='Aantal Verhuurde Fietsen')
-        ax2.set_ylabel("Aantal Verhuurde Fietsen", color='blue')
-        ax2.tick_params(axis='y', labelcolor='blue')
-
-        # Stel de limieten van de y-as voor Aantal Verhuurde Fietsen in zodat er altijd 2000 extra ruimte is
-        min_fietsen = filtered_data_week_reset['Aantal Verhuurde Fietsen'].min()
-        max_fietsen = filtered_data_week_reset['Aantal Verhuurde Fietsen'].max()
-        ax2.set_ylim(min_fietsen - 2000, max_fietsen + 2000)  # 2000 extra ruimte onder en boven de data
-
-        ax1.set_title(f"Sneeuwval en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}")
-        plt.xticks(rotation=45)
-        st.pyplot(fig)
-
+        fig = go.Figure()
+        
+        # Sneeuwval
+        fig.add_trace(go.Scatter(
+            x=filtered_data_week_reset['Date'],
+            y=filtered_data_week_reset['Sneeuwval (cm)'],
+            mode='lines+markers',
+            name='Sneeuwval (cm)',
+            line=dict(color='green')
+        ))
+        
+        # Aantal verhuurde fietsen
+        fig.add_trace(go.Scatter(
+            x=filtered_data_week_reset['Date'],
+            y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
+            mode='lines+markers',
+            name='Aantal Verhuurde Fietsen',
+            line=dict(color='blue'),
+            yaxis='y2'
+        ))
+        
+        fig.update_layout(
+            title=f"Sneeuwval en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
+            xaxis_title='Datum',
+            yaxis=dict(title='Sneeuwval (cm)', titlefont=dict(color='green')),
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
+        )
+        st.plotly_chart(fig)
     
         # Data inladen
     fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
