@@ -263,7 +263,8 @@ with tab3:
     
         # Voeg de bar voor het aantal ritjes toe (tweede y-as)
         fig.add_trace(go.Bar(x=avg_df['Month'], y=avg_df['Ride Count'],
-                             name='Aantal Ritjes', marker=dict(color='orange')))
+                             name='Aantal Ritjes', marker=dict(color='orange'),
+                             yaxis='y2'))  # Zorg ervoor dat de staven de tweede y-as gebruiken
     
         # Voeg dubbele y-assen toe
         fig.update_layout(
@@ -277,6 +278,7 @@ with tab3:
     
         # Toon de grafiek
         st.plotly_chart(fig)
+
 
 
 
