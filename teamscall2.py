@@ -50,10 +50,8 @@ mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Inleiding","🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation", "🚴 Ritjes", "🔧 Onderhoud", "🌤️ Weerdata"])
 with tab1:
     st.image("Vlag.png", caption="Welkom in Londen!")
-    st.markdown("Welkom op het London Fiets- en Metro Dashboard! Dit dashboard biedt uitgebreide informatie over het openbaar vervoer en fietsverhuur in Londen. 
-                Hier kun je de verschillende metro-routes en haltes verkennen, evenals gedetailleerde informatie over de locaties van fietsverhuurstations, inclusief het type fietsen (standaard of elektrische) en de beschikbaarheid ervan. 
-                Bovendien krijg je inzicht in het weer op specifieke dagen, zodat je kunt zien hoe dit mogelijk invloed heeft op de fietsverhuur. 
-                Tot slot biedt het dashboard ook gegevens over het aantal fietstransacties per dag, zodat je een goed overzicht hebt van het fietsgebruik in Londen.")
+    st.markdown("Welkom op het London Fiets- en Metro Dashboard!
+Dit dashboard biedt uitgebreide informatie over het openbaar vervoer en fietsverhuur in Londen. Hier kun je de verschillende metro-routes en haltes verkennen, evenals gedetailleerde informatie over de locaties van fietsverhuurstations, inclusief het type fietsen (standaard of elektrische) en de beschikbaarheid ervan. Bovendien krijg je inzicht in het weer op specifieke dagen, zodat je kunt zien hoe dit mogelijk invloed heeft op de fietsverhuur. Tot slot biedt het dashboard ook gegevens over het aantal fietstransacties per dag, zodat je een goed overzicht hebt van het fietsgebruik in Londen.")
     
 with tab2:
     st.header("🚇 Metro Stations en Lijnen")
