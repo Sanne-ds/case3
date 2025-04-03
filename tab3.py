@@ -1,26 +1,26 @@
 st.header("🌤️ Weerdata voor 2021")
 
-    # Zet de 'Unnamed: 0' kolom om naar een datetime-object
-    weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
+# Zet de 'Unnamed: 0' kolom om naar een datetime-object
+weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
 
-    # Zet de datum in de fietsdata correct
-    fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
-    fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
+# Zet de datum in de fietsdata correct
+fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
+fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
 
-    # Merge de weerdata en fietsdata op datum
-    weer_data = pd.merge(weer_data, fiets_rentals[['Day', 'Total Rentals']], left_on='Date', right_on='Day', how='left')
+# Merge de weerdata en fietsdata op datum
+weer_data = pd.merge(weer_data, fiets_rentals[['Day', 'Total Rentals']], left_on='Date', right_on='Day', how='left')
 
-    # Filter de data voor 2021
-    weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
+# Filter de data voor 2021
+weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
 
-    # Vertaling van kolomnamen
-    column_mapping = {
-        'Total Rentals': 'Aantal Verhuurde Fietsen',
-        'tavg': 'Gemiddelde Temperatuur (°C)',
-        'tmin': 'Minimale Temperatuur (°C)',
-        'tmax': 'Maximale Temperatuur (°C)',
-        'prcp': 'Neerslag (mm)',
-        'snow': 'Sneeuwval (cm)',
+# Vertaling van kolomnamen
+column_mapping = {
+    'Total Rentals': 'Aantal Verhuurde Fietsen',
+    'tavg': 'Gemiddelde Temperatuur (°C)',
+    'tmin': 'Minimale Temperatuur (°C)',
+    'tmax': 'Maximale Temperatuur (°C)',
+    'prcp': 'Neerslag (mm)',
+    'snow': 'Sneeuwval (cm)',
         'wdir': 'Windrichting (°)',
         'wspd': 'Windsnelheid (m/s)',
         'wpgt': 'Windstoten (m/s)',
