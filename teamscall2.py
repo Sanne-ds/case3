@@ -176,7 +176,7 @@ with tab2:
     percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
     
     # Toon de percentages in vakjes onderaan de pagina
-    st.write("### Percentage Fietsen")
+    st.write("### Verdeling standaard fietsen vs E-bikes")
     col1, col2 = st.columns(2)
     
     with col1:
