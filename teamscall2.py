@@ -49,7 +49,7 @@ mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 # Tabs
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Welkom💂","🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation", "🚴 Ritjes", "🔧 Onderhoud", "🌤️ Weerdata"])
 with tab1:
-    st.title("Welkom in Londen")
+    st.title("Welkom in Londen💂")
     st.image("Vlag.png", caption="Mede mogelijk gemaakt door uw lokale gidsen; Sanne en Marijn")
 
     st.markdown(
