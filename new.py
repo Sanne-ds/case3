@@ -435,5 +435,5 @@ with tab5:
     plt.ylim(0, full_data["Duration"].quantile(0.99))  # Limiteer de y-as op het 99e percentiel om extreme outliers te filteren
     
     # Toon de plot
-    plt.show()
+    st.pyplot(plt)
 
