@@ -164,6 +164,8 @@ with tab1:
 with tab2:
     
     st.header("🚲 Fietsverhuurstations")
+    df_cyclestations = pd.read_csv('cycle_stations.csv')
+    df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
         # Bereken het totaal aantal fietsen, standaard fietsen en e-bikes
     total_bikes = df_cyclestations['nbBikes'].sum()
     total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
@@ -182,13 +184,13 @@ with tab2:
     
     with col2:
         st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
+        
     with st.expander("⚙ *Fiets Filteropties*", expanded=True):
         bike_slider = st.slider("*Selecteer het minimum aantal beschikbare fietsen*", 0, 100, 0)
         filter_standard = st.checkbox("Toon stations met standaard fietsen", value=False)
         filter_ebike = st.checkbox("Toon stations met e-bikes", value=False)
     
-    df_cyclestations = pd.read_csv('cycle_stations.csv')
-    df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
+    
     
     m = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
     marker_cluster = MarkerCluster().add_to(m)
