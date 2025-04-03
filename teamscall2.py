@@ -57,12 +57,12 @@ with tab1:
         
         Dit dashboard biedt uitgebreide informatie over het openbaar vervoer en fietsverhuur in Londen.  
         
-        - **Metro Routes & Haltes:** Ontdek de verschillende metro-routes en haltes in de stad.  
-        - **Fietsverhuurstations:** Bekijk locaties van fietsverhuurstations, inclusief het type fietsen (*standaard of elektrische*) en hun beschikbaarheid.  
+        - **Metrostations:** Ontdek de verschillende metrostations in de stad, en vermijdt drukte (of zoek deze juist op!).  
+        - **Fietsverhuurstations:** Bekijk locaties van fietsverhuurstations, en check of er een fiets beschikbaar is voor jou! (*standaard of e-bike*).  
         - **Weer & Fietsverhuur:** Analyseer hoe het weer invloed kan hebben op fietsverhuur.  
         - **Fietsgebruik:** Krijg inzicht in het aantal fietstransacties per dag.  
 
-        Dit dashboard helpt je om een goed overzicht te krijgen van het fietsgebruik en het openbaar vervoer in Londen!
+        Dit dashboard helpt je om een goed overzicht te krijgen van het fietsgebruik en het metro-stelsel in Londen!
         """
     )
 
