@@ -497,59 +497,59 @@ filtered_data_week = weer_data_2021[weer_data_2021['Week'] == week_nummer]
 filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
 filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%d %B %Y')
 
-    # Selectbox om grafieken te kiezen
-    grafiek_keuze = st.selectbox(
-        'Kies welke grafiek je wilt zien:',
-        ['Aantal Verhuurde Fietsen per Dag',
-         'Gemiddelde Temperatuur per Dag',
-         'Neerslag per Dag',
-         'Sneeuwval per Dag']
+# Selectbox om grafieken te kiezen
+grafiek_keuze = st.selectbox(
+    'Kies welke grafiek je wilt zien:',
+    ['Aantal Verhuurde Fietsen per Dag',
+     'Gemiddelde Temperatuur per Dag',
+     'Neerslag per Dag',
+     'Sneeuwval per Dag']
+)
+
+# Toon de gekozen grafiek
+fig = go.Figure()
+
+if grafiek_keuze == 'Aantal Verhuurde Fietsen per Dag':
+    fig = px.line(
+        filtered_data_week_reset, 
+        x='Date', 
+        y='Aantal Verhuurde Fietsen', 
+        markers=True, 
+        title=f"Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
+        line_shape='linear'
     )
-    
-    # Toon de gekozen grafiek
-    fig = go.Figure()
-    
-    if grafiek_keuze == 'Aantal Verhuurde Fietsen per Dag':
-        fig = px.line(
-            filtered_data_week_reset, 
-            x='Date', 
-            y='Aantal Verhuurde Fietsen', 
-            markers=True, 
-            title=f"Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
-            line_shape='linear'
-        )
-        fig.update_yaxes(title_text="Aantal Verhuurde Fietsen", range=[filtered_data_week_reset['Aantal Verhuurde Fietsen'].min() - 2000, filtered_data_week_reset['Aantal Verhuurde Fietsen'].max() + 2000])
-    
-    elif grafiek_keuze == 'Gemiddelde Temperatuur per Dag':
-        fig.add_trace(go.Scatter(
-            x=filtered_data_week_reset['Date'],
-            y=filtered_data_week_reset['Gemiddelde Temperatuur (°C)'],
-            mode='lines+markers',
-            name='Gemiddelde Temperatuur (°C)',
-            line=dict(color='orange')
-        ))
-        fig.add_trace(go.Scatter(
-            x=filtered_data_week_reset['Date'],
-            y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
-            mode='lines+markers',
-            name='Aantal Verhuurde Fietsen',
-            line=dict(color='blue'),
-            yaxis='y2'
-        ))
-        fig.update_layout(
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
-        )
-    
+    fig.update_yaxes(title_text="Aantal Verhuurde Fietsen", range=[filtered_data_week_reset['Aantal Verhuurde Fietsen'].min() - 2000, filtered_data_week_reset['Aantal Verhuurde Fietsen'].max() + 2000])
+
+elif grafiek_keuze == 'Gemiddelde Temperatuur per Dag':
+    fig.add_trace(go.Scatter(
+        x=filtered_data_week_reset['Date'],
+        y=filtered_data_week_reset['Gemiddelde Temperatuur (°C)'],
+        mode='lines+markers',
+        name='Gemiddelde Temperatuur (°C)',
+        line=dict(color='orange')
+    ))
+    fig.add_trace(go.Scatter(
+        x=filtered_data_week_reset['Date'],
+        y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
+        mode='lines+markers',
+        name='Aantal Verhuurde Fietsen',
+        line=dict(color='blue'),
+        yaxis='y2'
+    ))
     fig.update_layout(
-        xaxis=dict(tickangle=-45),  # Draai de x-as labels 45 graden
-        legend=dict(
-            x=1.05,  # Plaats de legenda buiten de grafiek
-            y=1,
-            orientation='v'
-        )
+        yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
     )
-    
-    st.plotly_chart(fig)
+
+fig.update_layout(
+    xaxis=dict(tickangle=-45),  # Draai de x-as labels 45 graden
+    legend=dict(
+        x=1.05,  # Plaats de legenda buiten de grafiek
+        y=1,
+        orientation='v'
+    )
+)
+
+st.plotly_chart(fig)
     
         # Data inladen
     fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
