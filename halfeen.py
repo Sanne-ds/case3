@@ -438,9 +438,9 @@ with tab5:
             plt.xticks(rotation=90)
             plt.ylim(0, 250)
             plt.show()
-    
-        # Toon de plot
-        st.pyplot(plt)
+
+    # Toon de plot
+    st.pyplot(plt)
     
 
 
