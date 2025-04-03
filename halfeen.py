@@ -187,6 +187,50 @@ with tab2:
     folium_static(m)
 
 with tab3:
+        # Streamlit titel
+    st.title("Gemiddelde Fietsduur per Maand")
+    
+    # Lijst van maandnamen in het Nederlands
+    maandnamen = [
+        'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
+        'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
+    ]
+    
+    # Maak een lege lijst voor de gemiddelde duur per maand
+    average_durations = []
+    
+    # Itereer door de bestanden bike_1klein t/m bike_12klein
+    for i in range(1, 13):
+        # Bestandsnaam opbouwen
+        file_name = f'bike_{i}klein.csv'
+        
+        # Lees het CSV-bestand in een DataFrame
+        df = pd.read_csv(file_name)
+        
+        # Bereken de gemiddelde 'Duration' in minuten
+        avg_duration_minutes = df['Duration'].mean() / 60  # Omrekenen van seconden naar minuten
+        average_durations.append(avg_duration_minutes)
+    
+    # Maak een DataFrame met maandnamen en de gemiddelde duur
+    avg_df = pd.DataFrame({
+        'Month': maandnamen,  # Gebruik maandnamen in plaats van nummers
+        'Average Duration (Minutes)': average_durations
+    })
+    
+    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+    fig = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
+                  title='Gemiddelde ritjesduur (Minuten)',
+                  labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
+    
+    # Zorg ervoor dat de maanden als categorieën worden behandeld
+    fig.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 90 graden
+    
+    # Pas de y-as aan zodat deze van 10 tot 30 gaat
+    fig.update_yaxes(range=[10, 30])
+    
+    # Toon de plot in Streamlit
+    st.plotly_chart(fig)
+    
     st.header("🌤️ Weerdata voor 2021")
 
     # Zet de 'Unnamed: 0' kolom om naar een datetime-object
@@ -387,48 +431,3 @@ with tab4:
     
     # Plot de grafiek op basis van de geselecteerde maand
     plot_bike_data(month_name)
-
-with tab5:
-    # Streamlit titel
-    st.title("Gemiddelde Fietsduur per Maand")
-    
-    # Lijst van maandnamen in het Nederlands
-    maandnamen = [
-        'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
-        'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
-    ]
-    
-    # Maak een lege lijst voor de gemiddelde duur per maand
-    average_durations = []
-    
-    # Itereer door de bestanden bike_1klein t/m bike_12klein
-    for i in range(1, 13):
-        # Bestandsnaam opbouwen
-        file_name = f'bike_{i}klein.csv'
-        
-        # Lees het CSV-bestand in een DataFrame
-        df = pd.read_csv(file_name)
-        
-        # Bereken de gemiddelde 'Duration' in minuten
-        avg_duration_minutes = df['Duration'].mean() / 60  # Omrekenen van seconden naar minuten
-        average_durations.append(avg_duration_minutes)
-    
-    # Maak een DataFrame met maandnamen en de gemiddelde duur
-    avg_df = pd.DataFrame({
-        'Month': maandnamen,  # Gebruik maandnamen in plaats van nummers
-        'Average Duration (Minutes)': average_durations
-    })
-    
-    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
-    fig = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
-                  title='Gemiddelde Duur per Maand (Minuten)',
-                  labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
-    
-    # Zorg ervoor dat de maanden als categorieën worden behandeld
-    fig.update_xaxes(type='category', tickangle=90)  # Draai de maandnamen met 90 graden
-    
-    # Pas de y-as aan zodat deze van 10 tot 30 gaat
-    fig.update_yaxes(range=[10, 30])
-    
-    # Toon de plot in Streamlit
-    st.plotly_chart(fig)
