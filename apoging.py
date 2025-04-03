@@ -1,63 +1,39 @@
 import pandas as pd
-import streamlit as st
-import folium
-from streamlit_folium import folium_static
-from folium.plugins import MarkerCluster
-import seaborn as sns
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
 import plotly.express as px
 
-# Data inladen
-bestanden = ['2021_Q2_Central.csv', '2021_Q3_Central.csv', '2021_Q4_Central.csv']
-fiets_data_jaar = pd.concat([pd.read_csv(file) for file in bestanden], ignore_index=True)
+# Lijst van maandnamen in het Nederlands
+maandnamen = [
+    'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
+    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
+]
 
-weer_data = pd.read_csv('weather_london.csv')
-metro_data = pd.read_csv('AC2021_AnnualisedEntryExit.csv', sep=';')
-metro_stations_data = pd.read_csv('London stations.csv')
-tube_lines_data = pd.read_csv('London tube lines.csv')
+# Maak een lege lijst voor de gemiddelde duur per maand
+average_durations = []
 
-# Tabs aanmaken
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🚇 Metro Stations en Lijnen",
-    "🚲 Fietsverhuurstations",
-    "🌤️ Weerdata",
-    "🔧 Onderhoud",
-    "📊 Ritduur per maand"
-])
-
-# --- 📊 BOX PLOT PER MAAND ---
-with tab5:
-    st.header("📊 Verdeling van ritduur per maand")
-
-    # Bestandsnamen koppelen aan maanden
-    file_names = [
-        'bike_1klein.csv', 'bike_2klein.csv', 'bike_3klein.csv', 'bike_4klein.csv',
-        'bike_5klein.csv', 'bike_6klein.csv', 'bike_7klein.csv', 'bike_8klein.csv',
-        'bike_9klein.csv', 'bike_10klein.csv', 'bike_11klein.csv', 'bike_12klein.csv'
-    ]
+# Itereer door de bestanden bike_1klein t/m bike_12klein
+for i in range(1, 13):
+    # Bestandsnaam opbouwen
+    file_name = f'bike_{i}klein.csv'
     
-    month_names = [
-        'January', 'February', 'March', 'April', 'May', 'June', 
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ]
+    # Lees het CSV-bestand in een DataFrame
+    df = pd.read_csv(file_name)
     
-    # Data van alle maanden inladen en combineren
-    dfs = []
-    for i, file in enumerate(file_names):
-        df = pd.read_csv(file, usecols=['Duration', 'Bike Id'])  # Laad alleen relevante kolommen
-        df['Month'] = month_names[i]  # Voeg maandnaam toe
-        dfs.append(df)
-    
-    all_months_data = pd.concat(dfs, ignore_index=True)
+    # Bereken de gemiddelde 'Duration' in minuten
+    avg_duration_minutes = df['Duration'].mean() / 60  # Omrekenen van seconden naar minuten
+    average_durations.append(avg_duration_minutes)
 
-    # Boxplot maken
-    plt.figure(figsize=(12, 6))
-    sns.boxplot(x="Month", y="Duration", data=all_months_data, order=month_names)
-    plt.xticks(rotation=45)
-    plt.xlabel("Maand")
-    plt.ylabel("Duur van een ritje (seconden)")
-    plt.title("Boxplot van ritduur per maand")
+# Maak een DataFrame met maandnamen en de gemiddelde duur
+avg_df = pd.DataFrame({
+    'Month': maandnamen,  # Gebruik maandnamen in plaats van nummers
+    'Average Duration (Minutes)': average_durations
+})
 
-    # Toon de plot in Streamlit
-    st.pyplot(plt)
+# Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+fig = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
+              title='Gemiddelde Duur per Maand (Minuten)',
+              labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
+
+# Toon de plot
+fig.update_xaxes(type='category')  # Zorg ervoor dat de maanden als categorieën worden behandeld
+fig.show()
+
