@@ -46,7 +46,7 @@ metro_data["TotalEnEx"] = metro_data[entry_exit_cols].sum(axis=1)
 low_threshold = metro_data["TotalEnEx"].quantile(0.33)
 mid_threshold = metro_data["TotalEnEx"].quantile(0.66)
 
-# Tabs aanmaken
+# Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["🚇 Metro Stations en Lijnen", "🚲 Fietsverhuurstation", "🚴 Ritjes", "🔧 Onderhoud", "🌤️ Weerdata"])
 
 with tab1:
@@ -60,7 +60,7 @@ with tab1:
         else:
             metro_data["FilteredEnEx"] = metro_data[["FridayEntries", "SaturdayEntries", "SundayEntries", "FridayExits", "SaturdayExits", "SundayExits"]].sum(axis=1)
 
-        # Select slider voor drukte
+        # drukte slider
         drukte_option = st.select_slider(
             "*Selecteer drukte*",
             options=["Alle", "Rustig", "Normaal", "Druk"],
@@ -166,16 +166,16 @@ with tab2:
     st.header("🚲 Fietsverhuurstations")
     df_cyclestations = pd.read_csv('cycle_stations.csv')
     df_cyclestations['installDateFormatted'] = pd.to_datetime(df_cyclestations['installDate'], unit='ms').dt.strftime('%d-%m-%Y')
-        # Bereken het totaal aantal fietsen, standaard fietsen en e-bikes
+    # Totaal, standaard en ebikes
     total_bikes = df_cyclestations['nbBikes'].sum()
     total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
     total_ebikes = df_cyclestations['nbEBikes'].sum()
     
-    # Bereken de percentages
+    # Verdeling
     percentage_standard_bikes = (total_standard_bikes / total_bikes * 100) if total_bikes > 0 else 0
     percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
     
-    # Toon de percentages in vakjes onderaan de pagina
+    # Toon percentages
     st.write("### Verdeling standaard fietsen vs E-bikes")
     col1, col2 = st.columns(2)
     
@@ -217,17 +217,17 @@ with tab3:
     # Streamlit titel
     st.header("🚴 Ritjes")
     
-    # Lijst van maandnamen in het Nederlands
+    # Maandnamen
     maandnamen = [
         'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
         'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
     ]
     
-    # Maak lege lijsten voor de gemiddelde duur en het aantal ritjes per maand
+    # lijsten voor de gemiddelde duur en het aantal ritjes per maand
     average_durations = []
     ride_counts = []
     
-    # Itereer door de bestanden bike_1klein t/m bike_12klein
+    # bestanden
     for i in range(1, 13):
         # Bestandsnaam opbouwen
         file_name = f'bike_{i}klein.csv'
@@ -235,26 +235,26 @@ with tab3:
         # Lees het CSV-bestand in een DataFrame
         df = pd.read_csv(file_name)
         
-        # Bereken de gemiddelde 'Duration' in minuten
+        # Gemiddelde 'Duration' in minuten
         avg_duration_minutes = df['Duration'].mean() / 60  # Omrekenen van seconden naar minuten
         average_durations.append(avg_duration_minutes)
         
-        # Tel het aantal ritjes (aantal rijen in de DataFrame)
+        # Aantal ritjes (aantal rijen in de DataFrame)
         ride_count = len(df)
         ride_counts.append(ride_count)
     
-    # Maak een DataFrame met maandnamen, gemiddelde duur en het aantal ritjes
+    # DataFrame met maandnamen, gemiddelde duur en het aantal ritjes
     avg_df = pd.DataFrame({
-        'Month': maandnamen,  # Gebruik maandnamen in plaats van nummers
+        'Month': maandnamen,  
         'Average Duration (Minutes)': average_durations,
         'Ride Count': ride_counts
     })
     
-    # Dropdown menu voor de grafiekkeuze
+    # Dropdown menu ritjes
     option = st.selectbox("Selecteer een optie:", ['Gemiddelde duur', 'Aantal ritjes', 'Beide'])
     
     if option == 'Gemiddelde duur':
-        # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+        # plot van de gemiddelde duur per maand in minuten
         fig_avg_duration = go.Figure()
         fig_avg_duration.add_trace(go.Scatter(
             x=avg_df['Month'], 
@@ -272,7 +272,7 @@ with tab3:
         st.plotly_chart(fig_avg_duration)
     
     elif option == 'Aantal ritjes':
-        # Maak een Plotly lijn plot van het aantal ritjes per maand
+        # plot van het aantal ritjes per maand
         fig_ride_count = go.Figure()
         fig_ride_count.add_trace(go.Scatter(
             x=avg_df['Month'], 
@@ -289,7 +289,7 @@ with tab3:
         st.plotly_chart(fig_ride_count)
     
     elif option == 'Beide':
-        # Maak een gecombineerde grafiek met dubbele y-assen
+        #grafiek met dubbele y-assen
         fig_combined = go.Figure()
     
         # Lijn voor gemiddelde duur
@@ -321,28 +321,28 @@ with tab3:
         st.plotly_chart(fig_combined)
 
 with tab4:
-       # Functie om de grafiek te plotten op basis van het geselecteerde bestand
+       # grafiek plotten
     def plot_bike_data(month_name):
         if month_name == 'All year':
             # Alle bestanden laden en samenvoegen
             all_data = pd.concat([pd.read_csv(file) for file in file_month_dict.values()])
             
-            # Bereken de totale huurduur en het aantal verhuur per Bike Id voor het hele jaar
+            # totale duration en het aantal keer
             bike_duration = all_data.groupby('Bike Id').agg(
                 total_duration=('Duration', 'sum'),
                 rental_count=('Bike Id', 'count')
             ).reset_index()
     
-            # Sorteer de resultaten op basis van het aantal verhuur (hoe vaker verhuurd, hoe hoger de ranking)
+            # Sorteer de resultaten op basis van duration
             bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
     
-            # Selecteer de top 20 Bike Id's die het vaakst verhuurd zijn
+            # Top 20
             top_20_bike_ids = bike_duration_sorted.head(20)
     
             # Zet de totale duur om van seconden naar uren
             top_20_bike_ids.loc[:, 'total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
     
-            # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur (y-as schaal mag dynamisch zijn)
+            # Histogram
             plt.figure(figsize=(10,6))
             plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
             plt.xlabel('Bike ID')
@@ -410,10 +410,10 @@ with tab5:
     st.header("🌤️ Weerdata voor 2021")
 
  
-    # Zet de 'Unnamed: 0' kolom om naar een datetime-object
+    # Unnamed: 0' kolom naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
 
-    # Zet de datum in de fietsdata correct
+    # datum in de fietsdata correct
     fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
     fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
 
@@ -438,7 +438,7 @@ with tab5:
         'tsun': 'Zonduur (uren)'
     }
 
-    # Kalender om een specifieke datum te kiezen
+    # specifieke datum kiezen
     datum = st.date_input("*Selecteer een datum in 2021*", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
 
     # Haal het weeknummer van de geselecteerde datum op
@@ -596,20 +596,20 @@ with tab5:
     fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
     weer_data = pd.read_csv('weather_london.csv')
 
-    # Zorg ervoor dat de datums in datetime-formaat staan
+    # datums in datetime-formaat
     fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
     weer_data["Date"] = pd.to_datetime(weer_data["Unnamed: 0"])  # Zet de juiste kolomnaam om
 
     # Merge de datasets op datum
     combined_df = pd.merge(fiets_rentals, weer_data, left_on="Day", right_on="Date", how="inner")
 
-    # Verwijder de dubbele datumkolom (we houden "Day")
+    # Verwijder de dubbele datumkolom (behouden "Day")
     combined_df.drop(columns=["Date"], inplace=True)
 
     # Streamlit-app titel
     st.header("Correlatie tussen fietsverhuur en weer")
     
-    # Mapping van kolomnamen naar leesbare labels
+    # dropdown namen
     weerfactor_mapping = {
         "tavg": "Average Temperature",
         "tmin": "Minimum Temperature",
@@ -617,7 +617,7 @@ with tab5:
         "prcp": "Rainfall"
     }
     
-    # Selecteer een weerfactor met aangepaste labels
+    # weerfactor selecteren met aangepaste labels
     weerfactor_label = st.selectbox("Kies een weerfactor:", list(weerfactor_mapping.values()))
     
     # Converteer de geselecteerde label terug naar de juiste kolomnaam
@@ -633,7 +633,7 @@ with tab5:
     r_squared = model.rsquared  # R²-waarde van de regressie
     equation = f"y = {model.params[1]:.2f}x + {model.params[0]:.2f}"  # Regressievergelijking
     
-    # Plot maken met seaborn
+    # Plot maken 
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.regplot(x=x, y=y, line_kws={'color': 'red'}, scatter_kws={'alpha': 0.5}, ax=ax)
     ax.set_xlabel(weerfactor_label)
