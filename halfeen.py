@@ -352,88 +352,88 @@ with tab4:
 
 with tab5:
     
-# Functie om de grafiek te plotten op basis van het geselecteerde bestand
-def plot_bike_data(month_name, bike_usage):
-    if month_name == 'All year':
-        # Alle bestanden laden en samenvoegen
-        all_data = pd.concat([pd.read_csv(file) for file in file_month_dict.values()])
-        
-        # Bereken de totale huurduur en het aantal verhuur per Bike Id voor het hele jaar
-        bike_duration = all_data.groupby('Bike Id').agg(
-            total_duration=('Duration', 'sum'),
-            rental_count=('Bike Id', 'count')
-        ).reset_index()
-
-        # Als we de minst gebruikte fietsen willen tonen, sorteer op rental_count (oplopend)
-        if bike_usage == 'Minst gebruikt':
-            bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=True)
-        else:
-            # Sorteer op het aantal verhuur (meest gebruikt)
-            bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
-
-        # Selecteer de top 20
-        top_20_bike_ids = bike_duration_sorted.head(20)
-        
-        # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur
-        plt.figure(figsize=(10,6))
-        plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
-        plt.xlabel('Bike ID')
-        plt.ylabel('Aantal Verhuur')
-        plt.title(f'{bike_usage} fietsen van het jaar')
-        plt.xticks(rotation=90)
-        
-    else:
-        # Laad de geselecteerde maand
-        file_name = file_month_dict[month_name]
-        df = pd.read_csv(file_name)
-
-        # Bereken de totale huurduur en het aantal verhuur per Bike Id
-        bike_duration = df.groupby('Bike Id').agg(
-            total_duration=('Duration', 'sum'),
-            rental_count=('Bike Id', 'count')
-        ).reset_index()
-
-        # Als we de minst gebruikte fietsen willen tonen, sorteer op rental_count (oplopend)
-        if bike_usage == 'Minst gebruikt':
-            bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=True)
-        else:
-            # Sorteer op het aantal verhuur (meest gebruikt)
-            bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
-
-        # Selecteer de top 20
-        top_20_bike_ids = bike_duration_sorted.head(20)
-        
-        # Zet de totale huurduur om naar uren (optioneel)
-        top_20_bike_ids['total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
-
-        # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur (of duur)
-        plt.figure(figsize=(10,6))
-        plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
-        plt.xlabel('Bike ID')
-        plt.ylabel('Aantal Verhuur')
-        plt.title(f'{bike_usage} fietsen in {month_name}')
-        plt.xticks(rotation=90)
-
-        # Zet de limieten van de y-as vast (bijvoorbeeld van 0 tot 250 verhuur)
-        plt.ylim(0, 250)
+    # Functie om de grafiek te plotten op basis van het geselecteerde bestand
+    def plot_bike_data(month_name, bike_usage):
+        if month_name == 'All year':
+            # Alle bestanden laden en samenvoegen
+            all_data = pd.concat([pd.read_csv(file) for file in file_month_dict.values()])
+            
+            # Bereken de totale huurduur en het aantal verhuur per Bike Id voor het hele jaar
+            bike_duration = all_data.groupby('Bike Id').agg(
+                total_duration=('Duration', 'sum'),
+                rental_count=('Bike Id', 'count')
+            ).reset_index()
     
-    # Toon de plot
-    st.pyplot(plt)
-
-# Lijst van bestandsnamen en maandnamen
-file_names = ['bike_1klein.csv', 'bike_2klein.csv', 'bike_3klein.csv', 'bike_4klein.csv', 
-              'bike_5klein.csv', 'bike_6klein.csv', 'bike_7klein.csv', 'bike_8klein.csv', 
-              'bike_9klein.csv', 'bike_10klein.csv', 'bike_11klein.csv', 'bike_12klein.csv']
-
-# Maandnamen voor de dropdown, inclusief de optie 'All year'
-month_names = ['All year', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
-               'September', 'October', 'November', 'December']
-
-# Maak een dictionary om bestanden te koppelen aan maandnamen
-file_month_dict = dict(zip(month_names[1:], file_names))  # Skip 'All year' voor file mapping
-
-# Streamlit interface
-st.header('🔧 Tijd voor wat olie op de ketting')
-
-# Dropdown menu voor maandselectie
-
+            # Als we de minst gebruikte fietsen willen tonen, sorteer op rental_count (oplopend)
+            if bike_usage == 'Minst gebruikt':
+                bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=True)
+            else:
+                # Sorteer op het aantal verhuur (meest gebruikt)
+                bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
+    
+            # Selecteer de top 20
+            top_20_bike_ids = bike_duration_sorted.head(20)
+            
+            # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur
+            plt.figure(figsize=(10,6))
+            plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
+            plt.xlabel('Bike ID')
+            plt.ylabel('Aantal Verhuur')
+            plt.title(f'{bike_usage} fietsen van het jaar')
+            plt.xticks(rotation=90)
+            
+        else:
+            # Laad de geselecteerde maand
+            file_name = file_month_dict[month_name]
+            df = pd.read_csv(file_name)
+    
+            # Bereken de totale huurduur en het aantal verhuur per Bike Id
+            bike_duration = df.groupby('Bike Id').agg(
+                total_duration=('Duration', 'sum'),
+                rental_count=('Bike Id', 'count')
+            ).reset_index()
+    
+            # Als we de minst gebruikte fietsen willen tonen, sorteer op rental_count (oplopend)
+            if bike_usage == 'Minst gebruikt':
+                bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=True)
+            else:
+                # Sorteer op het aantal verhuur (meest gebruikt)
+                bike_duration_sorted = bike_duration.sort_values(by='rental_count', ascending=False)
+    
+            # Selecteer de top 20
+            top_20_bike_ids = bike_duration_sorted.head(20)
+            
+            # Zet de totale huurduur om naar uren (optioneel)
+            top_20_bike_ids['total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
+    
+            # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur (of duur)
+            plt.figure(figsize=(10,6))
+            plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
+            plt.xlabel('Bike ID')
+            plt.ylabel('Aantal Verhuur')
+            plt.title(f'{bike_usage} fietsen in {month_name}')
+            plt.xticks(rotation=90)
+    
+            # Zet de limieten van de y-as vast (bijvoorbeeld van 0 tot 250 verhuur)
+            plt.ylim(0, 250)
+        
+        # Toon de plot
+        st.pyplot(plt)
+    
+    # Lijst van bestandsnamen en maandnamen
+    file_names = ['bike_1klein.csv', 'bike_2klein.csv', 'bike_3klein.csv', 'bike_4klein.csv', 
+                  'bike_5klein.csv', 'bike_6klein.csv', 'bike_7klein.csv', 'bike_8klein.csv', 
+                  'bike_9klein.csv', 'bike_10klein.csv', 'bike_11klein.csv', 'bike_12klein.csv']
+    
+    # Maandnamen voor de dropdown, inclusief de optie 'All year'
+    month_names = ['All year', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+                   'September', 'October', 'November', 'December']
+    
+    # Maak een dictionary om bestanden te koppelen aan maandnamen
+    file_month_dict = dict(zip(month_names[1:], file_names))  # Skip 'All year' voor file mapping
+    
+    # Streamlit interface
+    st.header('🔧 Tijd voor wat olie op de ketting')
+    
+    # Dropdown menu voor maandselectie
+    
