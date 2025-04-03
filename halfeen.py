@@ -521,8 +521,7 @@ with tab4:
 
         ax1.set_title(f"Sneeuwval en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}")
         plt.xticks(rotation=45)
-        st.pyplot(fig)
-
+    st.pyplot(fig)
 
 with tab5:
        # Functie om de grafiek te plotten op basis van het geselecteerde bestand
