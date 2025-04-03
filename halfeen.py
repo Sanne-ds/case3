@@ -191,7 +191,7 @@ with tab2:
 with tab3:
 
     # Streamlit titel
-    st.title("Gemiddelde Fietsduur per Maand")
+    st.title("Fietsdata Analyse")
     
     # Lijst van maandnamen in het Nederlands
     maandnamen = [
@@ -226,28 +226,73 @@ with tab3:
         'Ride Count': ride_counts
     })
     
-    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
-    fig_avg_duration = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
-                               title='Gemiddelde ritjesduur (Minuten)',
-                               labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
+    # Dropdown menu voor de grafiekkeuze
+    option = st.selectbox("Selecteer een optie:", ['Gemiddelde duur', 'Aantal ritjes', 'Beide'])
     
-    # Zorg ervoor dat de maanden als categorieën worden behandeld
-    fig_avg_duration.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 90 graden
+    if option == 'Gemiddelde duur':
+        # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+        fig_avg_duration = go.Figure()
+        fig_avg_duration.add_trace(go.Scatter(
+            x=avg_df['Month'], 
+            y=avg_df['Average Duration (Minutes)'], 
+            mode='lines+markers',
+            name='Gemiddelde Duur (Minuten)'
+        ))
+        fig_avg_duration.update_layout(
+            title='Gemiddelde ritjesduur (Minuten)',
+            xaxis_title='Maand',
+            yaxis_title='Gemiddelde Duur (Minuten)',
+            xaxis=dict(type='category', tickangle=45),
+            yaxis=dict(range=[10, 30])
+        )
+        st.plotly_chart(fig_avg_duration)
     
-    # Pas de y-as aan zodat deze van 10 tot 30 gaat
-    fig_avg_duration.update_yaxes(range=[10, 30])
+    elif option == 'Aantal ritjes':
+        # Maak een Plotly bar plot van het aantal ritjes per maand
+        fig_ride_count = go.Figure()
+        fig_ride_count.add_trace(go.Bar(
+            x=avg_df['Month'], 
+            y=avg_df['Ride Count'], 
+            name='Aantal Ritjes'
+        ))
+        fig_ride_count.update_layout(
+            title='Aantal Ritjes per Maand',
+            xaxis_title='Maand',
+            yaxis_title='Aantal Ritjes',
+            xaxis=dict(type='category', tickangle=45)
+        )
+        st.plotly_chart(fig_ride_count)
     
-    # Maak een Plotly bar plot van het aantal ritjes per maand
-    fig_ride_count = px.line(avg_df, x='Month', y='Ride Count',
-                            title='Aantal Ritjes per Maand',
-                            labels={'Month': 'Maand', 'Ride Count': 'Aantal Ritjes'})
+    elif option == 'Beide':
+        # Maak een gecombineerde grafiek met dubbele y-assen
+        fig_combined = go.Figure()
     
-    # Zorg ervoor dat de maanden als categorieën worden behandeld
-    fig_ride_count.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 45 graden
+        # Lijn voor gemiddelde duur
+        fig_combined.add_trace(go.Scatter(
+            x=avg_df['Month'], 
+            y=avg_df['Average Duration (Minutes)'], 
+            mode='lines+markers',
+            name='Gemiddelde Duur (Minuten)',
+            yaxis='y1'
+        ))
     
-    # Toon de plots in Streamlit
-    st.plotly_chart(fig_avg_duration)
-    st.plotly_chart(fig_ride_count)
+        # Staafdiagram voor aantal ritjes
+        fig_combined.add_trace(go.Bar(
+            x=avg_df['Month'], 
+            y=avg_df['Ride Count'], 
+            name='Aantal Ritjes',
+            yaxis='y2'
+        ))
+    
+        # Layout instellen met dubbele y-assen
+        fig_combined.update_layout(
+            title='Gemiddelde Duur en Aantal Ritjes per Maand',
+            xaxis=dict(title='Maand', type='category', tickangle=45),
+            yaxis=dict(title='Gemiddelde Duur (Minuten)', side='left', range=[10, 30]),
+            yaxis2=dict(title='Aantal Ritjes', side='right', overlaying='y'),
+            legend=dict(x=0.5, y=-0.2, orientation='h')
+        )
+        st.plotly_chart(fig_combined)
 
 
 with tab4:
