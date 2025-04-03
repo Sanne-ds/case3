@@ -512,7 +512,7 @@ with tab5:
             y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
             mode='lines+markers',
             name='Aantal Verhuurde Fietsen',
-            line=dict(color='blue'),
+            line=dict(color='red'),
             yaxis='y2'
         ))
         
@@ -530,7 +530,7 @@ with tab5:
         fig = go.Figure()
         
         # Neerslag als staafdiagram
-        fig.add_trace(go.Bar(
+        fig.add_trace(go.Scatter(
             x=filtered_data_week_reset['Date'],
             y=filtered_data_week_reset['Neerslag (mm)'],
             name='Neerslag (mm)',
@@ -551,7 +551,7 @@ with tab5:
             title=f"Neerslag en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
             xaxis_title='Datum',
             yaxis=dict(title='Neerslag (mm)', titlefont=dict(color='blue')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='red')),
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue')),
             xaxis=dict(tickangle=45),
             legend=dict(x=1, y=1)
         )
