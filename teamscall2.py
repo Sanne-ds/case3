@@ -186,7 +186,7 @@ with tab2:
         st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
         
     with st.expander("⚙ *Fiets Filteropties*", expanded=True):
-        bike_slider = st.slider("*Selecteer het minimum aantal beschikbare fietsen*", 0, 100, 0)
+        bike_slider = st.slider("*Selecteer het minimum aantal beschikbare fietsen*", 0, 15, 0)
         filter_standard = st.checkbox("Toon stations met standaard fietsen", value=False)
         filter_ebike = st.checkbox("Toon stations met e-bikes", value=False)
     
