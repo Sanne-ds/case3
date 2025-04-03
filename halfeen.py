@@ -389,12 +389,18 @@ with tab4:
     plot_bike_data(month_name)
 
 with tab5:
-    import pandas as pd
+import pandas as pd
 import plotly.express as px
 import streamlit as st
 
 # Streamlit titel
 st.title("Gemiddelde Fietsduur per Maand")
+
+# Lijst van maandnamen in het Nederlands
+maandnamen = [
+    'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
+    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
+]
 
 # Maak een lege lijst voor de gemiddelde duur per maand
 average_durations = []
@@ -411,10 +417,9 @@ for i in range(1, 13):
     avg_duration_minutes = df['Duration'].mean() / 60  # Omrekenen van seconden naar minuten
     average_durations.append(avg_duration_minutes)
 
-# Maak een DataFrame met maanden (1=Januari, 2=Februari, ...) en de gemiddelde duur
-months = [i for i in range(1, 13)]  # Maanden 1 t/m 12
+# Maak een DataFrame met maandnamen en de gemiddelde duur
 avg_df = pd.DataFrame({
-    'Month': months,
+    'Month': maandnamen,  # Gebruik maandnamen in plaats van nummers
     'Average Duration (Minutes)': average_durations
 })
 
@@ -423,5 +428,9 @@ fig = px.line(avg_df, x='Month', y='Average Duration (Minutes)',
               title='Gemiddelde Duur per Maand (Minuten)',
               labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
 
+# Zorg ervoor dat de maanden als categorieën worden behandeld
+fig.update_xaxes(type='category')
+
 # Toon de plot in Streamlit
 st.plotly_chart(fig)
+
