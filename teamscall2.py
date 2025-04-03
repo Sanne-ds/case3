@@ -526,7 +526,7 @@ with tab5:
         fig = go.Figure()
         
         # Neerslag als staafdiagram
-        fig.add_trace(go.Bar(
+        fig.add_trace(go.Scatter(
             x=filtered_data_week_reset['Date'],
             y=filtered_data_week_reset['Neerslag (mm)'],
             name='Neerslag (mm)',
