@@ -351,7 +351,6 @@ with tab4:
     st.pyplot(fig)
 
 with tab5:
-
     # Functie om de grafiek te plotten op basis van het geselecteerde bestand
     def plot_bike_data(month_name):
         if month_name == 'All year':
