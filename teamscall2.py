@@ -60,7 +60,7 @@ with tab1:
         - **Metrostations:** Ontdek de verschillende metrostations in de stad, en vermijdt drukte (of zoek deze juist op!).  
         - **Fietsverhuurstations:** Bekijk locaties van fietsverhuurstations, en check of er een fiets beschikbaar is voor jou! (*standaard of e-bike*).  
         - **Weer & Fietsverhuur:** Analyseer hoe het weer invloed kan hebben op fietsverhuur.  
-        - **Fietsgebruik:** Krijg inzicht in het aantal fietstransacties per dag.  
+        - **Fietsgebruik:** En bekijk welke bike Id's je beter kunt vermijden!  
 
         Dit dashboard helpt je om een goed overzicht te krijgen van het fietsgebruik en het metro-stelsel in Londen!
         """
