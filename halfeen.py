@@ -425,8 +425,10 @@ with tab5:
                   labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
     
     # Zorg ervoor dat de maanden als categorieën worden behandeld
-    fig.update_xaxes(type='category')
+    fig.update_xaxes(type='category', tickangle=90)  # Draai de maandnamen met 90 graden
+    
+    # Pas de y-as aan zodat deze van 10 tot 30 gaat
+    fig.update_yaxes(range=[10, 30])
     
     # Toon de plot in Streamlit
     st.plotly_chart(fig)
-
