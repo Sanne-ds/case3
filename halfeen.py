@@ -351,7 +351,7 @@ with tab4:
     st.pyplot(fig)
 
 with tab5:
-    # Functie om de grafiek te plotten op basis van het geselecteerde bestand
+       # Functie om de grafiek te plotten op basis van het geselecteerde bestand
     def plot_bike_data(month_name):
         if month_name == 'All year':
             # Alle bestanden laden en samenvoegen
@@ -369,31 +369,17 @@ with tab5:
             # Selecteer de top 20 Bike Id's die het vaakst verhuurd zijn
             top_20_bike_ids = bike_duration_sorted.head(20)
     
-            # Selecteer de laagste 20 Bike Id's die het minst verhuurd zijn
-            bottom_20_bike_ids = bike_duration_sorted.tail(20)
-            
             # Zet de totale duur om van seconden naar uren
             top_20_bike_ids.loc[:, 'total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
-            bottom_20_bike_ids.loc[:, 'total_duration_hours'] = bottom_20_bike_ids['total_duration'] / 3600
     
-            # Plot de top 20 fietsen op basis van het aantal verhuur
-            plt.figure(figsize=(10, 6))
+            # Plot een histogram van de top 20 Bike Id's op basis van het aantal verhuur (y-as schaal mag dynamisch zijn)
+            plt.figure(figsize=(10,6))
             plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['rental_count'])
             plt.xlabel('Bike ID')
             plt.ylabel('Aantal Verhuur')
             plt.title(f'De meest gebruikte fietsen van het jaar')
             plt.xticks(rotation=90)
-            plt.show()
-    
-            # Plot de laagste 20 fietsen op basis van het aantal verhuur
-            plt.figure(figsize=(10, 6))
-            plt.bar(bottom_20_bike_ids['Bike Id'].astype(str), bottom_20_bike_ids['rental_count'])
-            plt.xlabel('Bike ID')
-            plt.ylabel('Aantal Verhuur')
-            plt.title(f'De minst gebruikte fietsen van het jaar')
-            plt.xticks(rotation=90)
-            plt.show()
-    
+            
         else:
             # Laad de geselecteerde maand
             file_name = file_month_dict[month_name]
@@ -411,35 +397,43 @@ with tab5:
             # Selecteer de top 20 Bike Id's die het langst verhuurd zijn
             top_20_bike_ids = bike_duration_sorted.head(20)
     
-            # Selecteer de laagste 20 Bike Id's die het minst verhuurd zijn
-            bottom_20_bike_ids = bike_duration_sorted.tail(20)
-    
             # Zet de totale duur om van seconden naar uren
             top_20_bike_ids.loc[:, 'total_duration_hours'] = top_20_bike_ids['total_duration'] / 3600
-            bottom_20_bike_ids.loc[:, 'total_duration_hours'] = bottom_20_bike_ids['total_duration'] / 3600
     
-            # Plot de top 20 fietsen op basis van de totale huurduur
-            plt.figure(figsize=(10, 6))
+            # Plot een histogram van de top 20 Bike Id's op basis van de totale huurduur (in uren)
+            plt.figure(figsize=(10,6))
             plt.bar(top_20_bike_ids['Bike Id'].astype(str), top_20_bike_ids['total_duration_hours'])
             plt.xlabel('Bike ID')
             plt.ylabel('Aantal uur gebruikt')
             plt.title(f'Meest gebruikte fietsen in ({month_name})')
             plt.xticks(rotation=90)
-            plt.ylim(0, 250)
-            plt.show()
     
-            # Plot de laagste 20 fietsen op basis van de totale huurduur
-            plt.figure(figsize=(10, 6))
-            plt.bar(bottom_20_bike_ids['Bike Id'].astype(str), bottom_20_bike_ids['total_duration_hours'])
-            plt.xlabel('Bike ID')
-            plt.ylabel('Aantal uur gebruikt')
-            plt.title(f'Minst gebruikte fietsen in ({month_name})')
-            plt.xticks(rotation=90)
+            # Zet de limieten van de y-as vast (bijvoorbeeld van 0 tot 250 uur)
             plt.ylim(0, 250)
-            plt.show()
-
-    # Toon de plot
-    st.pyplot(plt)
+    
+        # Toon de plot
+        st.pyplot(plt)
+    
+    # Lijst van bestandsnamen en maandnamen
+    file_names = ['bike_1klein.csv', 'bike_2klein.csv', 'bike_3klein.csv', 'bike_4klein.csv', 
+                  'bike_5klein.csv', 'bike_6klein.csv', 'bike_7klein.csv', 'bike_8klein.csv', 
+                  'bike_9klein.csv', 'bike_10klein.csv', 'bike_11klein.csv', 'bike_12klein.csv']
+    
+    # Maandnamen voor de dropdown, inclusief de optie 'All year'
+    month_names = ['All year', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
+                   'September', 'October', 'November', 'December']
+    
+    # Maak een dictionary om bestanden te koppelen aan maandnamen
+    file_month_dict = dict(zip(month_names[1:], file_names))  # Skip 'All year' voor file mapping
+    
+    # Streamlit interface
+    st.header('🔧 Tijd voor wat olie op de ketting')
+    
+    # Dropdown menu voor maandselectie
+    month_name = st.selectbox('Selecteer een maand:', month_names)
+    
+    # Plot de grafiek op basis van de geselecteerde maand
+    plot_bike_data(month_name)
     
 
 
