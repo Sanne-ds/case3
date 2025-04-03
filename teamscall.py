@@ -607,6 +607,5 @@ with tab6:
 
         ax1.set_title(f"Sneeuwval en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}")
         plt.xticks(rotation=45)
-        st.pyplot(fig)
-
-    
+    st.pyplot(fig)
+        
