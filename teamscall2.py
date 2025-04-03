@@ -408,68 +408,6 @@ with tab5:
     st.header("🌤️ Weerdata voor 2021")
 
  
-    # Zet de 'Unnamed: 0' kolom om naar een datetime-object
-    weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
-
-    # Zet de datum in de fietsdata correct
-    fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
-    fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
-
-    # Merge de weerdata en fietsdata op datum
-    weer_data = pd.merge(weer_data, fiets_rentals[['Day', 'Total Rentals']], left_on='Date', right_on='Day', how='left')
-
-    # Filter de data voor 2021
-    weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
-
-    # Vertaling van kolomnamen
-    column_mapping = {
-        'Total Rentals': 'Aantal Verhuurde Fietsen',
-        'tavg': 'Gemiddelde Temperatuur (°C)',
-        'tmin': 'Minimale Temperatuur (°C)',
-        'tmax': 'Maximale Temperatuur (°C)',
-        'prcp': 'Neerslag (mm)',
-        'snow': 'Sneeuwval (cm)',
-        'wdir': 'Windrichting (°)',
-        'wspd': 'Windsnelheid (m/s)',
-        'wpgt': 'Windstoten (m/s)',
-        'pres': 'Luchtdruk (hPa)',
-        'tsun': 'Zonduur (uren)'
-    }
-
-    # Kalender om een specifieke datum te kiezen
-    datum = st.date_input("*Selecteer een datum in 2021*", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
-
-    # Haal het weeknummer van de geselecteerde datum op
-    week_nummer = datum.isocalendar()[1]
-
-    # Filter de data voor de geselecteerde week
-    weer_data_2021['Week'] = weer_data_2021['Date'].dt.isocalendar().week
-    filtered_data_week = weer_data_2021[weer_data_2021['Week'] == week_nummer]
-
-    # Toon de gegevens voor de geselecteerde week
-    if not filtered_data_week.empty:
-        st.write(f"Gegevens voor week {week_nummer} van 2021 (rondom {datum.strftime('%d-%m-%Y')}):")
-
-        # Vervang kolomnamen met de vertaalde versie
-        filtered_data_week = filtered_data_week.rename(columns=column_mapping)
-
-        # Reset de index en voeg de aangepaste index toe die begint bij 1
-        filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
-        filtered_data_week_reset.index = filtered_data_week_reset.index + 1  # Start index vanaf 1
-
-        # Datum formatteren
-        filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%d %B %Y')
-
-        # Kolommen herschikken om "Aantal Verhuurde Fietsen" direct na de datum te zetten
-        kolommen = ['Date', 'Aantal Verhuurde Fietsen', 'Gemiddelde Temperatuur (°C)', 'Minimale Temperatuur (°C)', 
-                    'Maximale Temperatuur (°C)', 'Neerslag (mm)', 'Sneeuwval (cm)', 'Windrichting (°)', 
-                    'Windsnelheid (m/s)', 'Windstoten (m/s)', 'Luchtdruk (hPa)', 'Zonduur (uren)']
-        
-
-    else:
-        st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
-
-
     # Selectbox om grafieken te kiezen
     grafiek_keuze = st.selectbox(
         'Kies welke grafiek je wilt zien:',
@@ -490,6 +428,8 @@ with tab5:
             line_shape='linear'
         )
         fig.update_yaxes(title_text="Aantal Verhuurde Fietsen", range=[filtered_data_week_reset['Aantal Verhuurde Fietsen'].min() - 2000, filtered_data_week_reset['Aantal Verhuurde Fietsen'].max() + 2000])
+        fig.update_xaxes(tickangle=45)
+        fig.update_layout(legend=dict(x=1, y=1))
         st.plotly_chart(fig)
     
     elif grafiek_keuze == 'Gemiddelde Temperatuur per Dag':
@@ -518,7 +458,9 @@ with tab5:
             title=f"Gemiddelde Temperatuur en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
             xaxis_title='Datum',
             yaxis=dict(title='Gemiddelde Temperatuur (°C)', titlefont=dict(color='orange')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue')),
+            xaxis=dict(tickangle=45),
+            legend=dict(x=1, y=1)
         )
         st.plotly_chart(fig)
     
@@ -526,7 +468,7 @@ with tab5:
         fig = go.Figure()
         
         # Neerslag als staafdiagram
-        fig.add_trace(go.Scatter(
+        fig.add_trace(go.Bar(
             x=filtered_data_week_reset['Date'],
             y=filtered_data_week_reset['Neerslag (mm)'],
             name='Neerslag (mm)',
@@ -547,7 +489,9 @@ with tab5:
             title=f"Neerslag en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
             xaxis_title='Datum',
             yaxis=dict(title='Neerslag (mm)', titlefont=dict(color='blue')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='red'))
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='red')),
+            xaxis=dict(tickangle=45),
+            legend=dict(x=1, y=1)
         )
         st.plotly_chart(fig)
     
@@ -577,7 +521,9 @@ with tab5:
             title=f"Sneeuwval en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
             xaxis_title='Datum',
             yaxis=dict(title='Sneeuwval (cm)', titlefont=dict(color='green')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue')),
+            xaxis=dict(tickangle=45),
+            legend=dict(x=1, y=1)
         )
         st.plotly_chart(fig)
     
