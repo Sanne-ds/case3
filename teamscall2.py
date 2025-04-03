@@ -164,6 +164,24 @@ with tab1:
 with tab2:
     
     st.header("🚲 Fietsverhuurstations")
+        # Bereken het totaal aantal fietsen, standaard fietsen en e-bikes
+    total_bikes = df_cyclestations['nbBikes'].sum()
+    total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
+    total_ebikes = df_cyclestations['nbEBikes'].sum()
+    
+    # Bereken de percentages
+    percentage_standard_bikes = (total_standard_bikes / total_bikes * 100) if total_bikes > 0 else 0
+    percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
+    
+    # Toon de percentages in vakjes onderaan de pagina
+    st.write("### Percentage Fietsen")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric("Standaard Fietsen", f"{total_standard_bikes} fietsen", f"{percentage_standard_bikes:.2f}%")
+    
+    with col2:
+        st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
     with st.expander("⚙ *Fiets Filteropties*", expanded=True):
         bike_slider = st.slider("*Selecteer het minimum aantal beschikbare fietsen*", 0, 100, 0)
         filter_standard = st.checkbox("Toon stations met standaard fietsen", value=False)
@@ -191,25 +209,6 @@ with tab2:
                 ).add_to(marker_cluster)
     
     folium_static(m)
-    
-    # Bereken het totaal aantal fietsen, standaard fietsen en e-bikes
-    total_bikes = df_cyclestations['nbBikes'].sum()
-    total_standard_bikes = df_cyclestations['nbStandardBikes'].sum()
-    total_ebikes = df_cyclestations['nbEBikes'].sum()
-    
-    # Bereken de percentages
-    percentage_standard_bikes = (total_standard_bikes / total_bikes * 100) if total_bikes > 0 else 0
-    percentage_ebikes = (total_ebikes / total_bikes * 100) if total_bikes > 0 else 0
-    
-    # Toon de percentages in vakjes onderaan de pagina
-    st.write("### Percentage Fietsen")
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.metric("Standaard Fietsen", f"{total_standard_bikes} fietsen", f"{percentage_standard_bikes:.2f}%")
-    
-    with col2:
-        st.metric("Elektrische Fietsen", f"{total_ebikes} fietsen", f"{percentage_ebikes:.2f}%")
 
 with tab3:
     
