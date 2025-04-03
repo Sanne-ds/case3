@@ -19,10 +19,8 @@ data = load_data()
 st.title("Boxplot van ritduur per maand")
 
 if not data.empty:
-    show_outliers = st.checkbox("Toon outliers", value=True)
-    
     plt.figure(figsize=(12, 6))
-    sns.boxplot(x='Month', y='Duration', data=data, showfliers=show_outliers)
+    sns.boxplot(x='Month', y='Duration', data=data, showfliers=False)
     plt.xlabel("Maand")
     plt.ylabel("Duur (seconden)")
     plt.title("Boxplot van ritduur per maand")
