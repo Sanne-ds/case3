@@ -189,6 +189,61 @@ with tab2:
 with tab3:
     st.header("🌤️ Weerdata voor 2021")
 
+    import pandas as pd
+import plotly.express as px
+import streamlit as st
+
+# Lijst van maandnamen in het Nederlands
+maandnamen = [
+    'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 
+    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
+]
+
+# Streamlit applicatie header
+st.title("Gemiddelde Duur per Maand (Minuten)")
+
+# Upload functie om bestanden in te lezen
+st.sidebar.header("Upload de bestanden")
+uploaded_files = []
+for i in range(1, 13):
+    uploaded_file = st.sidebar.file_uploader(f"Bestand {i} (bike_{i}klein.csv)", type=["csv"], key=i)
+    if uploaded_file is not None:
+        uploaded_files.append(uploaded_file)
+
+# Controleer of er bestanden zijn geüpload
+if len(uploaded_files) == 12:
+    # Maak een lege lijst voor de gemiddelde duur per maand
+    average_durations = []
+
+    # Itereer door de geüploade bestanden
+    for i, uploaded_file in enumerate(uploaded_files):
+        # Lees het CSV-bestand in een DataFrame
+        df = pd.read_csv(uploaded_file)
+        
+        # Bereken de gemiddelde 'Duration' in minuten
+        avg_duration_minutes = df['Duration'].mean() / 60  # Omrekenen van seconden naar minuten
+        average_durations.append(avg_duration_minutes)
+
+    # Maak een DataFrame met maandnamen en de gemiddelde duur
+    avg_df = pd.DataFrame({
+        'Month': maandnamen,  # Gebruik maandnamen in plaats van nummers
+        'Average Duration (Minutes)': average_durations
+    })
+
+    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+    fig = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
+                  title='Gemiddelde Duur per Maand (Minuten)',
+                  labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
+
+    # Zorg ervoor dat de maanden als categorieën worden behandeld
+    fig.update_xaxes(type='category')
+
+    # Toon de plot in de Streamlit-app
+    st.plotly_chart(fig)
+else:
+    st.warning("Upload alstublieft 12 bestanden voor de maanden januari t/m december.")
+
+
     # Zet de 'Unnamed: 0' kolom om naar een datetime-object
     weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
 
