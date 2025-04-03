@@ -1,64 +1,51 @@
 import pandas as pd
-import plotly.express as px
-import streamlit as st
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# 📌 Titel van de app
-st.title("Bike Ride Duration Analysis per Month 🚴‍♂️")
-
-# ✅ Checkbox om outliers in- of uit te schakelen
-show_outliers = st.checkbox("Show Outliers", value=True)
-
-# 📂 Maanden koppelen aan bestandsnamen
+# Maanden toewijzen aan bestandsnamen
 months = {
-    "January": "bike_1klein.csv",
-    "February": "bike_2klein.csv",
-    "March": "bike_3klein.csv",
-    "April": "bike_4klein.csv",
-    "May": "bike_5klein.csv",
-    "June": "bike_6klein.csv",
-    "July": "bike_7klein.csv",
-    "August": "bike_8klein.csv",
-    "September": "bike_9klein.csv",
-    "October": "bike_10klein.csv",
-    "November": "bike_11klein.csv",
-    "December": "bike_12klein.csv",
+    "bike_1klein.csv": "January",
+    "bike_2klein.csv": "February",
+    "bike_3klein.csv": "March",
+    "bike_4klein.csv": "April",
+    "bike_5klein.csv": "May",
+    "bike_6klein.csv": "June",
+    "bike_7klein.csv": "July",
+    "bike_8klein.csv": "August",
+    "bike_9klein.csv": "September",
+    "bike_10klein.csv": "October",
+    "bike_11klein.csv": "November",
+    "bike_12klein.csv": "December"
 }
 
-@st.cache_data
-def load_data():
-    """🔄 Laadt alle CSV-bestanden en voegt de maandnaam toe."""
-    all_data = []
-    for month, file in months.items():
-        df = pd.read_csv(file)
-        df["Duration"] = df["Duration"] / 60  # ⏳ Seconden → Minuten
-        df["Month"] = month  # Voeg de maand toe
-        all_data.append(df)
-    
-    full_data = pd.concat(all_data, ignore_index=True)
-    full_data["Month"] = pd.Categorical(full_data["Month"], categories=months.keys(), ordered=True)  # Zet maand op volgorde
-    return full_data
+# Lege lijst om de data van alle maanden op te slaan
+all_data = []
 
-# 📂 Laad alle maanden in één keer
-full_data = load_data()
+# Loop door alle bestanden en voeg ze toe aan de lijst
+for file, month in months.items():
+    df = pd.read_csv(file)  # Lees het CSV-bestand in
+    df["Month"] = month  # Voeg de maand als nieuwe kolom toe
+    all_data.append(df)  # Voeg de DataFrame toe aan de lijst
 
-# 📌 Outliers filteren indien nodig
-if not show_outliers:
-    max_duration = full_data["Duration"].quantile(0.95)  # 95e percentiel
-    filtered_data = full_data[full_data["Duration"] <= max_duration]
-else:
-    filtered_data = full_data  # Toon alles
+# Combineer alle maanden in één DataFrame
+full_data = pd.concat(all_data, ignore_index=True)
 
-# 📊 Maak een interactieve boxplot met Plotly
-fig = px.box(
-    filtered_data, 
-    x="Month", 
-    y="Duration", 
-    color="Month",  # Kleur per maand
-    title="Ride Duration Distribution per Month",
-    labels={"Duration": "Ride Duration (minutes)", "Month": "Month"},
-    template="plotly_white",
-    points="outliers" if show_outliers else False  # ⚡ Snellere rendering
-)
+# Zet de maand om naar een categorie met juiste volgorde
+full_data["Month"] = pd.Categorical(full_data["Month"], categories=months.values(), ordered=True)
 
-# 🖼️ Toon de interactieve plot
-st.plotly_chart(fig)
+# Zet de duratie om van seconden naar minuten
+full_data["Duration"] = full_data["Duration"] / 60
+
+# Maak de boxplot
+plt.figure(figsize=(12, 6))
+sns.boxplot(x="Month", y="Duration", data=full_data, palette="Blues")
+
+# Grafiek opmaken
+plt.xticks(rotation=45)
+plt.xlabel("Month")
+plt.ylabel("Ride Duration (minutes)")
+plt.title("Distribution of Ride Durations per Month")
+plt.ylim(0, full_data["Duration"].quantile(0.99))  # Limiteer de y-as op het 99e percentiel om extreme outliers te filteren
+
+# Toon de plot
+plt.show()
