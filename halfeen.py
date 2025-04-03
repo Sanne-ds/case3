@@ -226,53 +226,29 @@ with tab3:
         'Ride Count': ride_counts
     })
     
-    # Maak een grafiek met Plotly met twee Y-assen
-    fig = go.Figure()
+    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
+    fig_avg_duration = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
+                               title='Gemiddelde ritjesduur (Minuten)',
+                               labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
     
-    # Voeg de lijn toe voor de gemiddelde duur
-    fig.add_trace(go.Scatter(x=avg_df['Month'], y=avg_df['Average Duration (Minutes)'], 
-                             mode='lines+markers', name='Gemiddelde Duur (Minuten)', 
-                             line=dict(color='blue')))
+    # Zorg ervoor dat de maanden als categorieën worden behandeld
+    fig_avg_duration.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 90 graden
     
-    # Voeg de lijn toe voor het aantal ritjes
-    fig.add_trace(go.Scatter(x=avg_df['Month'], y=avg_df['Ride Count'], 
-                             mode='lines+markers', name='Aantal Ritjes', 
-                             line=dict(color='red'), yaxis="y2"))
+    # Pas de y-as aan zodat deze van 10 tot 30 gaat
+    fig_avg_duration.update_yaxes(range=[10, 30])
     
-    # Voeg titels en labels toe en pas de rasterlijnen en ticks aan
-    fig.update_layout(
-        title="Gemiddelde Duur en Aantal Ritjes per Maand",
-        xaxis=dict(
-            title="Maand",
-            tickangle=45,  # Draai de maandnamen
-            showgrid=True,  # Horizontale rasters tonen
-            gridcolor='lightgray',  # Lichtere gridkleur
-        ),
-        yaxis=dict(
-            title="Gemiddelde Duur (Minuten)", 
-            range=[10, 30],  # Primaire Y-as
-            showgrid=True,  # Horizontale rasters tonen
-            gridcolor='lightgray',  # Lichtere gridkleur
-            ticks="inside",  # Ticks aan de binnenkant van de grafiek
-            dtick=2  # Ticks elke 2 minuten voor de gemiddelde duur
-        ),
-        yaxis2=dict(
-            title="Aantal Ritjes", 
-            overlaying="y", 
-            side="right",  # Secundaire Y-as aan de rechterkant
-            showgrid=True,  # Horizontale rasters tonen
-            gridcolor='lightgray',  # Lichtere gridkleur
-            ticks="inside",  # Ticks aan de binnenkant van de grafiek
-            dtick=5,  # Ticks elke 5 ritjes voor het aantal ritjes
-            range=[0, max(ride_counts) + 5],  # Zorg ervoor dat de range van de rechter Y-as goed is ingesteld
-            showline=True,  # Zorg ervoor dat de lijn van de y-as zichtbaar is
-            linecolor='red'  # Geef de lijn een kleur zodat hij zichtbaar is
-        ),
-        xaxis_tickangle=45,  # Draai de maandnamen
-    )
+    # Maak een Plotly bar plot van het aantal ritjes per maand
+    fig_ride_count = px.line(avg_df, x='Month', y='Ride Count',
+                            title='Aantal Ritjes per Maand',
+                            labels={'Month': 'Maand', 'Ride Count': 'Aantal Ritjes'})
     
-    # Toon de grafiek in Streamlit
-    st.plotly_chart(fig)
+    # Zorg ervoor dat de maanden als categorieën worden behandeld
+    fig_ride_count.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 45 graden
+    
+    # Toon de plots in Streamlit
+    st.plotly_chart(fig_avg_duration)
+    st.plotly_chart(fig_ride_count)
+
 
 with tab4:
     
