@@ -389,10 +389,6 @@ with tab4:
     plot_bike_data(month_name)
 
 with tab5:
-import pandas as pd
-import plotly.express as px
-import streamlit as st
-
 # Streamlit titel
 st.title("Gemiddelde Fietsduur per Maand")
 
