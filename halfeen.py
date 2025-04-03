@@ -189,7 +189,7 @@ with tab2:
     folium_static(m)
 
 with tab3:
-
+    
     # Streamlit titel
     st.title("Fietsdata Analyse")
     
@@ -248,11 +248,12 @@ with tab3:
         st.plotly_chart(fig_avg_duration)
     
     elif option == 'Aantal ritjes':
-        # Maak een Plotly bar plot van het aantal ritjes per maand
+        # Maak een Plotly lijn plot van het aantal ritjes per maand
         fig_ride_count = go.Figure()
-        fig_ride_count.add_trace(go.Bar(
+        fig_ride_count.add_trace(go.Scatter(
             x=avg_df['Month'], 
             y=avg_df['Ride Count'], 
+            mode='lines+markers',
             name='Aantal Ritjes'
         ))
         fig_ride_count.update_layout(
@@ -276,10 +277,11 @@ with tab3:
             yaxis='y1'
         ))
     
-        # Staafdiagram voor aantal ritjes
-        fig_combined.add_trace(go.Bar(
+        # Lijn voor aantal ritjes
+        fig_combined.add_trace(go.Scatter(
             x=avg_df['Month'], 
             y=avg_df['Ride Count'], 
+            mode='lines+markers',
             name='Aantal Ritjes',
             yaxis='y2'
         ))
