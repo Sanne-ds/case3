@@ -225,28 +225,31 @@ with tab3:
         'Ride Count': ride_counts
     })
     
-    # Maak een Plotly lijn plot van de gemiddelde duur per maand in minuten
-    fig_avg_duration = px.line(avg_df, x='Month', y='Average Duration (Minutes)', 
-                               title='Gemiddelde ritjesduur (Minuten)',
-                               labels={'Month': 'Maand', 'Average Duration (Minutes)': 'Gemiddelde Duur (Minuten)'})
+    # Maak een grafiek met Plotly met twee Y-assen
+    fig = go.Figure()
     
-    # Zorg ervoor dat de maanden als categorieën worden behandeld
-    fig_avg_duration.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 90 graden
+    # Voeg de lijn toe voor de gemiddelde duur
+    fig.add_trace(go.Scatter(x=avg_df['Month'], y=avg_df['Average Duration (Minutes)'], 
+                             mode='lines+markers', name='Gemiddelde Duur (Minuten)', 
+                             line=dict(color='blue')))
     
-    # Pas de y-as aan zodat deze van 10 tot 30 gaat
-    fig_avg_duration.update_yaxes(range=[10, 30])
+    # Voeg de lijn toe voor het aantal ritjes
+    fig.add_trace(go.Scatter(x=avg_df['Month'], y=avg_df['Ride Count'], 
+                             mode='lines+markers', name='Aantal Ritjes', 
+                             line=dict(color='red'), yaxis="y2"))
     
-    # Maak een Plotly bar plot van het aantal ritjes per maand
-    fig_ride_count = px.bar(avg_df, x='Month', y='Ride Count',
-                            title='Aantal Ritjes per Maand',
-                            labels={'Month': 'Maand', 'Ride Count': 'Aantal Ritjes'})
+    # Voeg titels en labels toe
+    fig.update_layout(
+        title="Gemiddelde Duur en Aantal Ritjes per Maand",
+        xaxis=dict(title="Maand"),
+        yaxis=dict(title="Gemiddelde Duur (Minuten)", range=[10, 30]),  # Primaire Y-as
+        yaxis2=dict(title="Aantal Ritjes", overlaying="y", side="right"),  # Secundaire Y-as
+        xaxis_tickangle=45
+    )
     
-    # Zorg ervoor dat de maanden als categorieën worden behandeld
-    fig_ride_count.update_xaxes(type='category', tickangle=45)  # Draai de maandnamen met 45 graden
-    
-    # Toon de plots in Streamlit
-    st.plotly_chart(fig_avg_duration)
-    st.plotly_chart(fig_ride_count)
+    # Toon de grafiek in Streamlit
+    st.plotly_chart(fig)
+
 
 
 with tab4:
