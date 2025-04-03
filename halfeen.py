@@ -191,7 +191,7 @@ with tab2:
 with tab3:
     
     # Streamlit titel
-    st.title("🚴 Ritjes")
+    st.header("🚴 Ritjes")
     
     # Lijst van maandnamen in het Nederlands
     maandnamen = [
