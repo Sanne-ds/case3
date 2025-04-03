@@ -523,6 +523,13 @@ with tab5:
     plot_bike_data(month_name)
 
 with tab6:
+
+    # Selectbox om grafieken te kiezen
+    grafiek_keuze = st.selectbox('Kies welke grafiek je wilt zien:', 
+                                 ['Aantal Verhuurde Fietsen per Dag', 
+                                  'Gemiddelde Temperatuur per Dag', 
+                                  'Neerslag per Dag', 
+                                  'Sneeuwval per Dag'])
     # Toon de gekozen grafiek
     if grafiek_keuze == 'Aantal Verhuurde Fietsen per Dag':
         fig, ax = plt.subplots(figsize=(10, 6))
