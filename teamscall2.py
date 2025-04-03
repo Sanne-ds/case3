@@ -470,6 +470,33 @@ with tab5:
         st.write(f"Geen gegevens gevonden voor week {week_nummer} van 2021.")
 
 
+# Zet de 'Unnamed: 0' kolom om naar een datetime-object
+weer_data['Date'] = pd.to_datetime(weer_data['Unnamed: 0'], format='%Y-%m-%d')
+
+# Zet de datum in de fietsdata correct
+fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
+fiets_rentals["Day"] = pd.to_datetime(fiets_rentals["Day"])
+
+# Merge de weerdata en fietsdata op datum
+weer_data = pd.merge(weer_data, fiets_rentals[['Day', 'Total Rentals']], left_on='Date', right_on='Day', how='left')
+
+# Filter de data voor 2021
+weer_data_2021 = weer_data[weer_data['Date'].dt.year == 2021]
+
+# Kalender om een specifieke datum te kiezen
+datum = st.date_input("*Selecteer een datum in 2021*", min_value=pd.to_datetime("2021-01-01"), max_value=pd.to_datetime("2021-12-31"))
+
+# Haal het weeknummer van de geselecteerde datum op
+week_nummer = datum.isocalendar()[1]
+
+# Filter de data voor de geselecteerde week
+weer_data_2021['Week'] = weer_data_2021['Date'].dt.isocalendar().week
+filtered_data_week = weer_data_2021[weer_data_2021['Week'] == week_nummer]
+
+# Datum formatteren
+filtered_data_week_reset = filtered_data_week.reset_index(drop=True)
+filtered_data_week_reset['Date'] = filtered_data_week_reset['Date'].dt.strftime('%d %B %Y')
+
     # Selectbox om grafieken te kiezen
     grafiek_keuze = st.selectbox(
         'Kies welke grafiek je wilt zien:',
@@ -480,6 +507,8 @@ with tab5:
     )
     
     # Toon de gekozen grafiek
+    fig = go.Figure()
+    
     if grafiek_keuze == 'Aantal Verhuurde Fietsen per Dag':
         fig = px.line(
             filtered_data_week_reset, 
@@ -490,14 +519,8 @@ with tab5:
             line_shape='linear'
         )
         fig.update_yaxes(title_text="Aantal Verhuurde Fietsen", range=[filtered_data_week_reset['Aantal Verhuurde Fietsen'].min() - 2000, filtered_data_week_reset['Aantal Verhuurde Fietsen'].max() + 2000])
-        fig.update_xaxes(tickangle=45)
-        fig.update_layout(legend=dict(x=1, y=1))
-        st.plotly_chart(fig)
     
     elif grafiek_keuze == 'Gemiddelde Temperatuur per Dag':
-        fig = go.Figure()
-        
-        # Gemiddelde temperatuur
         fig.add_trace(go.Scatter(
             x=filtered_data_week_reset['Date'],
             y=filtered_data_week_reset['Gemiddelde Temperatuur (°C)'],
@@ -505,8 +528,6 @@ with tab5:
             name='Gemiddelde Temperatuur (°C)',
             line=dict(color='orange')
         ))
-        
-        # Aantal verhuurde fietsen
         fig.add_trace(go.Scatter(
             x=filtered_data_week_reset['Date'],
             y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
@@ -515,79 +536,20 @@ with tab5:
             line=dict(color='blue'),
             yaxis='y2'
         ))
-        
         fig.update_layout(
-            title=f"Gemiddelde Temperatuur en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
-            xaxis_title='Datum',
-            yaxis=dict(title='Gemiddelde Temperatuur (°C)', titlefont=dict(color='orange')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue')),
-            xaxis=dict(tickangle=45),
-            legend=dict(x=1, y=1)
+            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue'))
         )
-        st.plotly_chart(fig)
     
-    elif grafiek_keuze == 'Neerslag per Dag':
-        fig = go.Figure()
-        
-        # Neerslag als staafdiagram
-        fig.add_trace(go.Bar(
-            x=filtered_data_week_reset['Date'],
-            y=filtered_data_week_reset['Neerslag (mm)'],
-            name='Neerslag (mm)',
-            marker_color='blue'
-        ))
-        
-        # Aantal verhuurde fietsen als lijn
-        fig.add_trace(go.Scatter(
-            x=filtered_data_week_reset['Date'],
-            y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
-            mode='lines+markers',
-            name='Aantal Verhuurde Fietsen',
-            line=dict(color='red'),
-            yaxis='y2'
-        ))
-        
-        fig.update_layout(
-            title=f"Neerslag en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
-            xaxis_title='Datum',
-            yaxis=dict(title='Neerslag (mm)', titlefont=dict(color='blue')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='red')),
-            xaxis=dict(tickangle=45),
-            legend=dict(x=1, y=1)
+    fig.update_layout(
+        xaxis=dict(tickangle=-45),  # Draai de x-as labels 45 graden
+        legend=dict(
+            x=1.05,  # Plaats de legenda buiten de grafiek
+            y=1,
+            orientation='v'
         )
-        st.plotly_chart(fig)
+    )
     
-    elif grafiek_keuze == 'Sneeuwval per Dag':
-        fig = go.Figure()
-        
-        # Sneeuwval
-        fig.add_trace(go.Scatter(
-            x=filtered_data_week_reset['Date'],
-            y=filtered_data_week_reset['Sneeuwval (cm)'],
-            mode='lines+markers',
-            name='Sneeuwval (cm)',
-            line=dict(color='green')
-        ))
-        
-        # Aantal verhuurde fietsen
-        fig.add_trace(go.Scatter(
-            x=filtered_data_week_reset['Date'],
-            y=filtered_data_week_reset['Aantal Verhuurde Fietsen'],
-            mode='lines+markers',
-            name='Aantal Verhuurde Fietsen',
-            line=dict(color='blue'),
-            yaxis='y2'
-        ))
-        
-        fig.update_layout(
-            title=f"Sneeuwval en Aantal Verhuurde Fietsen per Dag in Week {week_nummer}",
-            xaxis_title='Datum',
-            yaxis=dict(title='Sneeuwval (cm)', titlefont=dict(color='green')),
-            yaxis2=dict(title='Aantal Verhuurde Fietsen', overlaying='y', side='right', titlefont=dict(color='blue')),
-            xaxis=dict(tickangle=45),
-            legend=dict(x=1, y=1)
-        )
-        st.plotly_chart(fig)
+    st.plotly_chart(fig)
     
         # Data inladen
     fiets_rentals = pd.read_csv('fietsdata2021_rentals_by_day.csv')
