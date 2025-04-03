@@ -165,18 +165,6 @@ with tab2:
     
     st.header("🚲 Fietsverhuurstations")
 
-        # Toont de percentages in vakjes onderaan de pagina
-    st.write("### Percentage Fietsen")
-    
-    # Maak twee kolommen voor de percentages
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.write(f"*Standaard Fietsen*: {total_standard_bikes} fietsen ({percentage_standard_bikes:.2f}%)")
-    
-    with col2:
-        st.write(f"*Elektrische Fietsen*: {total_ebikes} fietsen ({percentage_ebikes:.2f}%)")
-
     with st.expander("⚙ *Fiets Filteropties*", expanded=True):
         bike_slider = st.slider("*Selecteer het minimum aantal beschikbare fietsen*", 0, 100, 0)
 
@@ -199,6 +187,18 @@ with tab2:
             ).add_to(marker_cluster)
 
     folium_static(m)
+
+# Toont de percentages in vakjes onderaan de pagina
+    st.write("### Percentage Fietsen")
+    
+    # Maak twee kolommen voor de percentages
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write(f"*Standaard Fietsen*: {total_standard_bikes} fietsen ({percentage_standard_bikes:.2f}%)")
+    
+    with col2:
+        st.write(f"*Elektrische Fietsen*: {total_ebikes} fietsen ({percentage_ebikes:.2f}%)")
 
 with tab3:
     
